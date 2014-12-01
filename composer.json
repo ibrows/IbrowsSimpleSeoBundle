@@ -1,0 +1,24 @@
+{
+    "name": "ibrows/simple-seo-bundle",
+    "type": "symfony-bundle",
+    "description": "A Symfony2 Bundle to add some SEO functionality",
+    "keywords": ["Ibrows", "SEO", "Symfony2", "Bundle"],
+    "homepage": "http://www.ibrows.ch",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "iBROWS",
+            "homepage": "https://github.com/ibrows"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/framework-bundle": "!=2.3.9,~2.2"
+    },
+    "suggest": {
+        "ibrows/simplecms-bundle": "~4.2"
+    },    
+    "autoload": {
+        "psr-4": { "Ibrows\\SimpleSeoBundle\\": "" }
+    }
+}
