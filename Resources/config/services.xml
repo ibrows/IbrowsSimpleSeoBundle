@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="ibrows_simple_seo.entity_manager.class">Doctrine\ORM\EntityManager</parameter>
+        <parameter key="ibrows_simple_seo.meta_tag_renderer.class">Ibrows\SimpleSeoBundle\Renderer\MetaTagToHtmlRenderer</parameter>
+        <parameter key="ibrows_simple_seo.content_manager.class">Ibrows\SimpleSeoBundle\Model\ContentManager</parameter>
+        <parameter key="ibrows_simple_seo.twig_extension.class">Ibrows\SimpleSeoBundle\Extension\TwigExtension</parameter>
+        <parameter key="ibrows_simple_seo.routing_loader.class">Ibrows\SimpleSeoBundle\Routing\RouteLoader</parameter>
+        <parameter key="ibrows_simple_seo.routing_aliashandler.class">Ibrows\SimpleSeoBundle\Routing\AliasHandler</parameter>
+    </parameters>
+    <services>
+
+        <service id="ibrows_simple_seo.entity_manager" factory-service="doctrine" factory-method="getManager" class="%ibrows_simple_seo.entity_manager.class%" public="false"/>
+
+        <service id="ibrows_simple_seo.meta_tag_renderer" class="%ibrows_simple_seo.meta_tag_renderer.class%"/>
+
+        <service id="ibrows_simple_seo.content_manager" class="%ibrows_simple_seo.content_manager.class%">
+            <argument type="service" id="ibrows_simple_seo.entity_manager"/>
+        </service>
+
+
+        <service id="ibrows_simple_seo.twig_extension" class="%ibrows_simple_seo.twig_extension.class%">
+            <tag name="twig.extension"/>
+            <argument type="service" id="ibrows_simple_seo.content_manager"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="service_container"/>
+        </service>
+
+
+        <service id="ibrows_simple_seo.routing_loader" class="%ibrows_simple_seo.routing_loader.class%">
+            <argument type="service" id="ibrows_simple_seo.content_manager"/>
+            <argument type="service" id="router"/>
+            <call method="setLocalizedAlias">
+                <argument>%ibrows_simple_seo.localized_alias%</argument>
+            </call>
+            <tag name="routing.loader"/>
+
+        </service>
+        <service id="ibrows_simple_seo.routing_aliashandler" class="%ibrows_simple_seo.routing_aliashandler.class%">
+            <argument type="service" id="router"/>
+            <tag name="doctrine.event_subscriber"/>
+        </service>
+    </services>
+</container>
