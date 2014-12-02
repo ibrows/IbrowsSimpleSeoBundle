@@ -101,7 +101,7 @@ class AliasHandler implements  EventSubscriber
         }
 
         $info = $this->getPathInfoFromMetaTagKey($content->getKeyword());
-        $arr = $this->keyGenerator->splitLocaledKeyword($this->getKeyword());
+        $arr = $this->keyGenerator->splitLocaledKeyword($content->getKeyword());
         $contentInfo = $content->getPathInfo();
         $contentInfo['_locale'] = $arr[0];
         // add locale routing info after controller
