@@ -114,7 +114,7 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
             $headers .= $arguments['pre'] . '<meta name="DC.language" scheme="RFC3066" content="'. $currentLang .'" />';
         }
         $key = $this->keyGenerator->generateMetaTagKey($this->container->get('request'), $this->container->get('router'), $locale);
-        $obj = $this->manager->findMetaTag('metatags', $key, $locale);
+        $obj = $this->manager->findMetaTag($key, $locale);
         if ($obj) {
             $headers .= $this->metaTagToHtml($obj, $arguments);
         }

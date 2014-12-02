@@ -27,6 +27,15 @@ class ContentManager implements ContentManagerInterface
     }
 
     /**
+     * @param mixed $entityClass
+     */
+    public function setEntityClass($entityClass)
+    {
+        $this->entityClass = $entityClass;
+    }
+
+
+    /**
      * @return \Doctrine\ORM\EntityRepository
      */
     protected function getRepository(){
@@ -48,13 +57,18 @@ class ContentManager implements ContentManagerInterface
         }
     }
 
+
     /**
      * @param $key
      * @param $locale
      * @return ContentInterface
      */
-    public function findMetaTag($key, $locale)
+    public function findMetaTag($key, $locale = null)
     {
-        return $this->getRepository()->findOneBy(array('key'=>$key,'locale'=>$locale));
+        $criteria = array('keyword'=>$key);
+        if($locale && property_exists($this->entityClass,'locale')){
+            $criteria['locale']=$locale;
+        }
+        return $this->getRepository()->findOneBy($criteria);
     }
 }
