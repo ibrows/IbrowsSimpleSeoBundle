@@ -16,7 +16,7 @@
         "symfony/framework-bundle": "!=2.3.9,~2.2"
     },
     "suggest": {
-        "ibrows/simplecms-bundle": "~4.2"
+        "ibrows/simplecms-bundle": "~5.0"
     },    
     "autoload": {
         "psr-4": { "Ibrows\\SimpleSeoBundle\\": "" }
