@@ -4,7 +4,7 @@ namespace Ibrows\SimpleSeoBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class SimpleSeoBundle extends Bundle
+class IbrowsSimpleSeoBundle extends Bundle
 {
     
     public function build(\Symfony\Component\DependencyInjection\ContainerBuilder $container)
