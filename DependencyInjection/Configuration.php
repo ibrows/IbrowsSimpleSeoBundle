@@ -35,7 +35,7 @@ class Configuration implements ConfigurationInterface
         $node
             ->children()
 
-                ->scalarNode('entityClass')->default('Ibrows\SimpleSeoBundle\Entity\MetaTagContent')->end()
+                ->scalarNode('entity_class')->defaultValue('Ibrows\SimpleSeoBundle\Entity\MetaTagContent')->end()
                 ->booleanNode('localized_alias')->defaultTrue()->end()
 
             ->end()

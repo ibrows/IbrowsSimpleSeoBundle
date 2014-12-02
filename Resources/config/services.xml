@@ -19,12 +19,14 @@
 
         <service id="ibrows_simple_seo.content_manager" class="%ibrows_simple_seo.content_manager.class%">
             <argument type="service" id="ibrows_simple_seo.entity_manager"/>
+            <argument>%ibrows_simple_seo.entity_class%</argument>
         </service>
 
 
         <service id="ibrows_simple_seo.twig_extension" class="%ibrows_simple_seo.twig_extension.class%">
             <tag name="twig.extension"/>
             <argument type="service" id="ibrows_simple_seo.content_manager"/>
+            <argument type="service" id="translator"/>
             <argument type="service" id="router"/>
             <argument type="service" id="service_container"/>
         </service>
