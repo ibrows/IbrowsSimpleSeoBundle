@@ -4,18 +4,21 @@ namespace Ibrows\SimpleSeoBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SimpleSeoBundle\Model\ContentInterface;
-use Ibrows\SimpleSeoBundle\Routing\AliasHandler;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 
 /**
- *
- * @ORM\Table(name="scms_metatagscontent")
- * @ORM\Entity(repositoryClass="Ibrows\SimpleSeoBundle\Repository\MetaTagRepository")
+ * @ORM\Entity
  * @DoctrineAssert\UniqueEntity("alias")
- * @ORM\HasLifecycleCallbacks
  */
 class MetaTagContent implements ContentInterface
 {
+    /**
+     * @var integer $id
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
 
     /**
      * @var $metatags
@@ -23,7 +26,7 @@ class MetaTagContent implements ContentInterface
      *
      */
     protected $metatags;
-    protected static $preventvars = array('title', 'keywords', 'description');
+    protected static $metatagPreventKeys = array('title', 'keywords', 'description');
 
     /**
      * @var string $alias
@@ -34,7 +37,7 @@ class MetaTagContent implements ContentInterface
 
     /**
      * @var $pathinfo
-     * @ORM\Column(type="array")
+     * @ORM\Column(name="pathinfo", type="array")
      *
      */
     protected $pathinfo;
@@ -53,6 +56,7 @@ class MetaTagContent implements ContentInterface
      */
     protected $params;
 
+
     protected $changedPathInfo = false;
 
     public function getPathinfo()
@@ -65,7 +69,8 @@ class MetaTagContent implements ContentInterface
         $this->changedPathInfo = true;
     }
 
-    public function setChangedPathInfo(array $pathInfo){
+    public function setChangedPathInfo(array $pathInfo)
+    {
         $this->pathinfo = $pathInfo;
     }
 
@@ -76,8 +81,6 @@ class MetaTagContent implements ContentInterface
     {
         return $this->changedPathInfo;
     }
-
-
 
 
     public function setRouteDefaults(array $defaults)
@@ -130,7 +133,7 @@ class MetaTagContent implements ContentInterface
         $return = '';
         if (is_array($this->metatags)) {
             foreach ($this->metatags as $key => $val) {
-                if (!in_array($key, self::$preventvars)) {
+                if (!in_array($key, self::$metatagPreventKeys)) {
                     $return .= "$key=$val\n";
                 }
             }
@@ -146,7 +149,7 @@ class MetaTagContent implements ContentInterface
                 continue;
             }
             $key = substr($val, 0, $pos);
-            if (!in_array($key, self::$preventvars)) {
+            if (!in_array($key, self::$metatagPreventKeys)) {
                 $this->metatags[$key] = substr($val, ++$pos);
             }
         }
@@ -159,6 +162,40 @@ class MetaTagContent implements ContentInterface
         }
         return $this->metatags[$metatag];
     }
+
+
+    public function getHtmlRenderServiceId()
+    {
+        return 'ibrows_simple_seo.meta_tag_renderer';
+    }
+
+
+    // <editor-fold desc="Simple Getter Setter" defaultstate="collapsed" >
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKeyword()
+    {
+        return $this->keyword;
+    }
+
+    /**
+     * @param string $keyword
+     */
+    public function setKeyword($keyword)
+    {
+        $this->keyword = $keyword;
+    }
+
 
     public function setMetatag($metatag, $value)
     {
@@ -195,43 +232,20 @@ class MetaTagContent implements ContentInterface
         $this->setMetatag('description', $description);
     }
 
-    public function toHTML($filter, array $args)
-    {
-        throw new \Exception("use HTML Renderer");
-    }
+    // </editor-fold>
+
+
+    // old scms
 
     public function setParameters(\Symfony\Component\DependencyInjection\ContainerInterface $params)
     {
         $this->params = $params;
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
+    public function toHTML($filter, array $args)
     {
-        return $this->id;
+        throw new \Exception("use HTML Renderer");
     }
 
-    /**
-     * Set keyword
-     *
-     * @param string $keyword
-     */
-    public function setKeyword($keyword)
-    {
-        $this->keyword = $keyword;
-    }
 
-    /**
-     * Get keyword
-     *
-     * @return string
-     */
-    public function getKeyword()
-    {
-        return $this->keyword;
-    }
 }

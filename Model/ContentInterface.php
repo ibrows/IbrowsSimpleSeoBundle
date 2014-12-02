@@ -11,7 +11,7 @@ interface ContentInterface
 
     public function isChangedPathInfo();
 
-    public function getKeyWord();
+    public function getKeyword();
 
     public function getPathInfo();
     public function setChangedPathInfo(array $pathInfo);
