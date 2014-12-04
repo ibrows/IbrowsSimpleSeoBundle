@@ -37,6 +37,7 @@ class Configuration implements ConfigurationInterface
 
                 ->scalarNode('entity_class')->defaultValue('Ibrows\SimpleSeoBundle\Entity\MetaTagContent')->end()
                 ->booleanNode('localized_alias')->defaultTrue()->end()
+                ->booleanNode('add_query_string')->defaultFalse()->end()
 
             ->end()
         ->end();

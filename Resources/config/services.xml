@@ -43,6 +43,7 @@
         </service>
         <service id="ibrows_simple_seo.routing_aliashandler" class="%ibrows_simple_seo.routing_aliashandler.class%">
             <argument type="service" id="router"/>
+            <call method="setAddQueryString"><argument>%ibrows_simple_seo.add_query_string%</argument></call>
             <tag name="doctrine.event_subscriber"/>
         </service>
     </services>

@@ -54,6 +54,10 @@ class AliasHandler implements  EventSubscriber
 
     }
 
+    public function setAddQueryString($addQueryString){
+        $this->keyGenerator->setAddQueryString($addQueryString);
+    }
+
     public function getQueryInfo($key){
         $info = $this->keyGenerator->generatePathInfoFromMetaTagKey($key);
         $pos = strpos($info,'?');
