@@ -20,6 +20,24 @@ class KeyGenerator
 {
 
     const LOCALE_DELIMITER = '---';
+    protected $addQueryString = false;
+
+    /**
+     * @return boolean
+     */
+    public function isAddQueryString()
+    {
+        return $this->addQueryString;
+    }
+
+    /**
+     * @param boolean $addQueryString
+     */
+    public function setAddQueryString($addQueryString)
+    {
+        $this->addQueryString = $addQueryString;
+    }
+
 
     public function generatePathInfoFromMetaTagKey($key)
     {
@@ -62,7 +80,9 @@ class KeyGenerator
             $pathInfo = str_replace('/app_dev.php', '', $pathInfo);
             $pathInfo = preg_replace('!([^?]*)(\?_locale=[^&]*)!', '$1', $pathInfo);
         }
-
+        if($this->addQueryString){
+            $pathInfo .= '?'.$request->getQueryString();
+        }
 
         return $this->generateMetaTagKeyFromPathInfo($pathInfo, $locale);
     }

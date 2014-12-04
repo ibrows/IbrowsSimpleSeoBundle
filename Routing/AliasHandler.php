@@ -29,6 +29,22 @@ class AliasHandler implements  EventSubscriber
     protected $keyGenerator;
 
     /**
+     * @return KeyGenerator
+     */
+    public function getKeyGenerator()
+    {
+        return $this->keyGenerator;
+    }
+
+    /**
+     * @param KeyGenerator $keyGenerator
+     */
+    public function setKeyGenerator($keyGenerator)
+    {
+        $this->keyGenerator = $keyGenerator;
+    }
+
+    /**
      * @param RouterInterface $router
      */
     public function __construct(RouterInterface $router)
@@ -38,6 +54,18 @@ class AliasHandler implements  EventSubscriber
 
     }
 
+    public function getQueryInfo($key){
+        $info = $this->keyGenerator->generatePathInfoFromMetaTagKey($key);
+        $pos = strpos($info,'?');
+        if($pos === false){
+            return array();
+        }
+        $query =  $info = substr($info,$pos+1);
+        $queryArray = array();
+        parse_str($query,$queryArray);
+        return $queryArray;
+    }
+
     /**
      * @param $key
      * @return array An array of parameters
@@ -45,18 +73,27 @@ class AliasHandler implements  EventSubscriber
     public function  getPathInfoFromMetaTagKey($key)
     {
         $info = $this->keyGenerator->generatePathInfoFromMetaTagKey($key);
-        return $this->router->match($info);
+        $this->router->getContext()->setMethod('GET');
+        if($this->keyGenerator->isAddQueryString()){
+            $info = substr($info,0,strpos($info,'?'));
+            $match =  $this->router->match($info);
+            return $match;
+        }else{
+            return $this->router->match($info);
+        }
     }
 
     /**
      * @param $route
+     * @param array $queryArgs
      * @return array
      */
     public function  getDefaults($route)
     {
         $route = $this->router->getRouteCollection()->get($route);
         if ($route) {
-            return $route->getDefaults();
+            $defaults = $route->getDefaults();
+            return $defaults;
         }
 
         return array();
@@ -108,6 +145,7 @@ class AliasHandler implements  EventSubscriber
         foreach ($info as $key => $value) {
             $contentInfo[$key] = $value;
         }
+        $contentInfo = array_merge($contentInfo,$this->getQueryInfo($content->getKeyword()));
         $content->setChangedPathInfo($contentInfo);
         $content->setRouteDefaults($this->getDefaults($contentInfo['_route']));
     }
