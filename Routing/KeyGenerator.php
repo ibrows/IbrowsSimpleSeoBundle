@@ -9,8 +9,6 @@
 namespace Ibrows\SimpleSeoBundle\Routing;
 
 
-use Ibrows\SimpleSeoBundle\Routing\RouteLoader;
-use Ibrows\SimpleSeoBundle\Routing\UrlGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -21,6 +19,15 @@ class KeyGenerator
 
     const LOCALE_DELIMITER = '---';
     protected $addQueryString = false;
+
+    /**
+     * @param $addQueryString
+     */
+    public function __construct($addQueryString = false)
+    {
+        $this->addQueryString = $addQueryString;
+    }
+
 
     /**
      * @return boolean
@@ -80,8 +87,8 @@ class KeyGenerator
             $pathInfo = str_replace('/app_dev.php', '', $pathInfo);
             $pathInfo = preg_replace('!([^?]*)(\?_locale=[^&]*)!', '$1', $pathInfo);
         }
-        if($this->addQueryString){
-            $pathInfo .= '?'.$request->getQueryString();
+        if ($this->addQueryString) {
+            $pathInfo .= '?' . $request->getQueryString();
         }
 
         return $this->generateMetaTagKeyFromPathInfo($pathInfo, $locale);

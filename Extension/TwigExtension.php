@@ -66,6 +66,22 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
     }
 
     /**
+     * @return KeyGenerator
+     */
+    public function getKeyGenerator()
+    {
+        return $this->keyGenerator;
+    }
+
+    /**
+     * @param KeyGenerator $keyGenerator
+     */
+    public function setKeyGenerator($keyGenerator)
+    {
+        $this->keyGenerator = $keyGenerator;
+    }
+
+    /**
      * @return \Symfony\Component\HttpFoundation\Request
      */
     protected function getRequest()

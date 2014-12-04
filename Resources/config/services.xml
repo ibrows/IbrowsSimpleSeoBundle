@@ -10,6 +10,7 @@
         <parameter key="ibrows_simple_seo.twig_extension.class">Ibrows\SimpleSeoBundle\Extension\TwigExtension</parameter>
         <parameter key="ibrows_simple_seo.routing_loader.class">Ibrows\SimpleSeoBundle\Routing\RouteLoader</parameter>
         <parameter key="ibrows_simple_seo.routing_aliashandler.class">Ibrows\SimpleSeoBundle\Routing\AliasHandler</parameter>
+        <parameter key="ibrows_simple_seo.key_generator.class">Ibrows\SimpleSeoBundle\Routing\KeyGenerator</parameter>
     </parameters>
     <services>
 
@@ -29,6 +30,9 @@
             <argument type="service" id="translator"/>
             <argument type="service" id="router"/>
             <argument type="service" id="service_container"/>
+            <call method="setKeyGenerator">
+                <argument type="service" id="ibrows_simple_seo.key_generator"/>
+            </call>
         </service>
 
 
@@ -43,8 +47,13 @@
         </service>
         <service id="ibrows_simple_seo.routing_aliashandler" class="%ibrows_simple_seo.routing_aliashandler.class%">
             <argument type="service" id="router"/>
-            <call method="setAddQueryString"><argument>%ibrows_simple_seo.add_query_string%</argument></call>
+            <call method="setKeyGenerator">
+                <argument type="service" id="ibrows_simple_seo.key_generator"/>
+            </call>
             <tag name="doctrine.event_subscriber"/>
+        </service>
+        <service id="ibrows_simple_seo.key_generator" class="%ibrows_simple_seo.key_generator.class%">
+            <argument>%ibrows_simple_seo.add_query_string%</argument>
         </service>
     </services>
 </container>
