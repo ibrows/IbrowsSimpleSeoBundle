@@ -43,13 +43,13 @@ class IbrowsSimpleSeoExtension extends Extension
             new \RecursiveArrayIterator($config),
             \RecursiveIteratorIterator::SELF_FIRST
         );
-
         foreach ($iterator as $value) {
             $path = array();
             for ($i = 0; $i <= $iterator->getDepth(); $i++) {
                 $path[] = $iterator->getSubIterator($i)->key();
             }
             $key = $alias . '.' . implode(".", $path);
+            var_dump($key);
             $container->setParameter($key, $value);
         }
     }

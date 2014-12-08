@@ -18,13 +18,8 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-
         $node = $treeBuilder->root('ibrows_simple_seo');
-
-
         $this->addTemplateSection($node);
-
-
         return $treeBuilder;
     }
 
@@ -34,16 +29,17 @@ class Configuration implements ConfigurationInterface
 
         $node
             ->children()
-
                 ->scalarNode('entity_class')->defaultValue('Ibrows\SimpleSeoBundle\Entity\MetaTagContent')->end()
                 ->booleanNode('localized_alias')->defaultTrue()->end()
                 ->booleanNode('add_query_string')->defaultFalse()->end()
-
-            ->end()
-        ->end();
+                ->arrayNode('admin')->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('allow_create')->defaultTrue()->end()
+                    ->end()
+                ->end()
+            ->end();
 
     }
-
 
 
 }

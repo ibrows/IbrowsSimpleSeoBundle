@@ -17,6 +17,7 @@
             <call method="setKeyGenerator">
                 <argument type="service" id="ibrows_simple_seo.key_generator"/>
             </call>
+            <call method="setAllowToAdd"><argument>%ibrows_simple_seo.admin.allow_create%</argument></call>
         </service>
 
     </services>

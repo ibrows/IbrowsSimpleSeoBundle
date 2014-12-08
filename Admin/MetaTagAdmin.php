@@ -28,6 +28,10 @@ class MetaTagAdmin extends Admin
      * @var KeyGenerator
      */
     protected $keyGenerator;
+    /**
+     * @var bool
+     */
+    protected $allowToAdd;
 
     /**
      * @param KeyGenerator $keyGenerator
@@ -38,7 +42,39 @@ class MetaTagAdmin extends Admin
     }
 
     /**
-     * @param mixed $object
+     * @return bool
+     */
+    public function getAllowToAdd()
+    {
+        return $this->allowToAdd;
+    }
+
+    /**
+     * @param bool $allowToAdd
+     */
+    public function setAllowToAdd($allowToAdd)
+    {
+        $this->allowToAdd = $allowToAdd;
+    }
+
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Sonata\AdminBundle\Admin\Admin::configureRoutes()
+     */
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        parent::configureRoutes($collection);
+        if (!$this->getAllowToAdd()) {
+            $collection->remove('create');
+        }
+    }
+
+
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Sonata\AdminBundle\Admin\Admin::prePersist()
      */
     public function prePersist($object)
     {
@@ -51,7 +87,6 @@ class MetaTagAdmin extends Admin
             $key = $this->keyGenerator->generateMetaTagKeyFromRelativePath($path, $this->getRouter(), $this->translator->getLocale());
             $object->setKeyword($key);
         } catch (\Exception $e) {
-            return;
         }
 
     }
@@ -78,14 +113,6 @@ class MetaTagAdmin extends Admin
     protected function getRouter()
     {
         return $this->getConfigurationPool()->getContainer()->get('router');
-    }
-
-    /**
-     * @param RouteCollection $collection
-     */
-    protected function configureRoutes(RouteCollection $collection)
-    {
-        parent::configureRoutes($collection);
     }
 
     /**
@@ -163,6 +190,6 @@ class MetaTagAdmin extends Admin
         $form->add('keywords', 'text');
         $form->add('description', 'textarea', array());
         $form->add('metatags', 'textarea', array('label' => 'additional metatags'));
-        $form->setHelps(array('metatags'=>'help.metatags'));
+        $form->setHelps(array('metatags' => 'help.metatags'));
     }
 } 
