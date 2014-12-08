@@ -50,6 +50,10 @@ class ContentManager implements ContentManagerInterface
         $qb = $this->getRepository()->createQueryBuilder('a');
         $qb->select('a.pathinfo, a.alias');
         $qb->where('a.alias IS NOT null');
+        $qb->addOrderBy('a.id','ASC');
+        if($this->em->getClassMetadata($this->entityClass)->hasField('position')){
+            $qb->addOrderBy('a.position','ASC');
+        }
         try {
             return $qb->getQuery()->getResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
         } catch (\Doctrine\ORM\NoResultException $e) {
