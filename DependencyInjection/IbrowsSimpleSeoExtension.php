@@ -49,7 +49,6 @@ class IbrowsSimpleSeoExtension extends Extension
                 $path[] = $iterator->getSubIterator($i)->key();
             }
             $key = $alias . '.' . implode(".", $path);
-            var_dump($key);
             $container->setParameter($key, $value);
         }
     }
