@@ -28,6 +28,12 @@ class IbrowsSimpleSeoExtension extends Extension
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
+
+        $bundles = $container->getParameter('kernel.bundles');
+        if (isset($bundles['SonataAdminBundle'])) {
+            $loader->load('admin.xml');
+        }
+
     }
 
 

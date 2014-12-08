@@ -63,11 +63,19 @@ class KeyGenerator
         return $key;
     }
 
+
     public function generateMetaTagKey(Request $request, RouterInterface $router, $locale)
     {
-
         $pathInfo = $request->getPathInfo();
+        $key = $this->generateMetaTagKeyFromRelativePath($pathInfo,$router,$locale);
+        if ($this->addQueryString) {
+            $key .= '?' . $request->getQueryString();
+        }
+        return $key;
+    }
 
+    public function generateMetaTagKeyFromRelativePath ($pathInfo, RouterInterface $router, $locale)
+    {
         try {
             $info = $router->match($pathInfo);
         } catch (ResourceNotFoundException $e) {
@@ -77,7 +85,6 @@ class KeyGenerator
         }
 
         if ($info !== false && strpos($info['_route'], RouteLoader::ROUTE_BEGIN) === 0) {
-
             // allready alias, get the base pathinfo
             $oldInfo = RouteLoader::getPathinfo($info['_route']);
             $oldRoute = $oldInfo['_route'];
@@ -87,10 +94,6 @@ class KeyGenerator
             $pathInfo = str_replace('/app_dev.php', '', $pathInfo);
             $pathInfo = preg_replace('!([^?]*)(\?_locale=[^&]*)!', '$1', $pathInfo);
         }
-        if ($this->addQueryString) {
-            $pathInfo .= '?' . $request->getQueryString();
-        }
-
         return $this->generateMetaTagKeyFromPathInfo($pathInfo, $locale);
     }
 

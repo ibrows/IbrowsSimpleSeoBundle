@@ -1,0 +1,15 @@
+'additional metatags': 'zusätzliche Metatags'
+admin:
+    group: Alias
+    label: Alias
+alias: Alias
+description: Beschreibung
+id: Id
+keywords: Keywords
+'meta tag content list': 'Alias'
+'origin url': 'Ursprungs URL'
+path: Pfad
+title: Titel
+url: URL
+help:
+  metatags: Zusätzliche Metatags im Format "key = value" angeben

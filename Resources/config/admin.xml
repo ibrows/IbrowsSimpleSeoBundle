@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+        >
+    <parameters>
+        <parameter key="ibrows_simple_seo.admin.meta_tag.class">Ibrows\SimpleSeoBundle\Admin\MetaTagAdmin</parameter>
+    </parameters>
+    <services>
+        <service id="ibrows_simple_seo.admin.meta_tag" class="%ibrows_simple_seo.admin.meta_tag.class%">
+            <tag name="sonata.admin" manager_type="orm" group="admin.group" label_catalogue="IbrowsSimpleSeoBundle" label="admin.label"/>
+            <argument/>
+            <argument>%ibrows_simple_seo.entity_class%</argument>
+            <argument/>
+            <call method="setTranslationDomain">
+                <argument>IbrowsSimpleSeoBundle</argument>
+            </call>
+            <call method="setKeyGenerator">
+                <argument type="service" id="ibrows_simple_seo.key_generator"/>
+            </call>
+        </service>
+
+    </services>
+</container>
