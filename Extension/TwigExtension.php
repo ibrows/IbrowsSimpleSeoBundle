@@ -159,6 +159,7 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
 
     public function metaTagsHtml($defaults = true, array $arguments = array(), $canonical = true)
     {
+
         $locale = $this->translator->getLocale();
         $currentLang = substr($locale, 0, 2);
         if (!isset($arguments['pre'])) {
@@ -177,7 +178,7 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
             $headers .= $this->metaTagToHtml($obj, $arguments);
         }
         if ($canonical) {
-            $headers .= $this->canonicalTagsHtml($this->getRequest()->getPathInfo());
+            $headers .=  $arguments['pre'] . $this->canonicalTagsHtml($this->getRequest()->getPathInfo());
         }
         return $headers;
     }

@@ -32,19 +32,21 @@ class MetaTagToHtmlRenderer implements HtmlRendererInterface
         if (isset($args['output'])) {
             return $args['output'];
         }
-        if (!isset($args['pre'])) {
-            $args['pre'] = "\n       ";
-        }
         $output = '';
-        foreach ($content->getMetaTagArray() as $key => $tag) {
-            if (isset($args[$key])) {
-                $tag = $tag . ' ' . $args[$key];
-            }
+
+        $tags = array_merge($args,$content->getMetaTagArray());
+        if (!isset($tags['pre'])) {
+            $pre = "\n       ";
+        } else {
+            $pre = $tags['pre'];
+            unset($tags['pre']);
+        }
+        foreach ($tags as $key => $tag) {
             if ($key == 'title') {
-                $output .= $args['pre'] . "<title>" . $this->filterHtml($tag) . "</title>";
+                $output .= $pre . "<title>" . $this->filterHtml($tag) . "</title>";
                 continue;
             }
-            $output .= $args['pre'] . self::createMetaTag($this->filterHtml($key), $this->filterHtml($tag));
+            $output .= $pre . self::createMetaTag($this->filterHtml($key), $this->filterHtml($tag));
         }
         return $output;
     }
@@ -65,7 +67,7 @@ class MetaTagToHtmlRenderer implements HtmlRendererInterface
     /**
      * @param string $name
      * @param string $content
-     * @param array $extras
+     * @param array  $extras
      * @return string
      */
     protected function createMetaTag($name, $content, $extras = array())
