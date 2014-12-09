@@ -86,6 +86,7 @@ class RouteLoader extends FileLoader
     }
 
     private static function parameters2String($parameters){
+        ksort($parameters);
         $return = '';
         foreach ($parameters as $key => $value) {
             if(is_array($value)){
