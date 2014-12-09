@@ -6,6 +6,7 @@ use Ibrows\SimpleSeoBundle\Model\ContentInterface;
 use Ibrows\SimpleSeoBundle\Model\ContentManagerInterface;
 use Ibrows\SimpleSeoBundle\Renderer\HtmlFilterInterface;
 use Ibrows\SimpleSeoBundle\Renderer\HtmlRendererInterface;
+use Ibrows\SimpleSeoBundle\Renderer\MetaTagToHtmlRenderer;
 use Ibrows\SimpleSeoBundle\Routing\KeyGenerator;
 use Ibrows\SimpleSeoBundle\Routing\RouteLoader;
 
@@ -176,6 +177,8 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         $obj = $this->manager->findMetaTag($key, $locale);
         if ($obj) {
             $headers .= $this->metaTagToHtml($obj, $arguments);
+        }else{
+            $headers .=  MetaTagToHtmlRenderer::createMetaTags($arguments['pre'],$arguments, $this);
         }
         if ($canonical) {
             $headers .=  $arguments['pre'] . $this->canonicalTagsHtml($this->getRequest()->getPathInfo());

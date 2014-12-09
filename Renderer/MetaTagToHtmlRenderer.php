@@ -32,36 +32,32 @@ class MetaTagToHtmlRenderer implements HtmlRendererInterface
         if (isset($args['output'])) {
             return $args['output'];
         }
-        $output = '';
 
-        $tags = array_merge($args,$content->getMetaTagArray());
+        $tags = array_merge($args, $content->getMetaTagArray());
         if (!isset($tags['pre'])) {
             $pre = "\n       ";
         } else {
             $pre = $tags['pre'];
             unset($tags['pre']);
         }
-        foreach ($tags as $key => $tag) {
-            if ($key == 'title') {
-                $output .= $pre . "<title>" . $this->filterHtml($tag) . "</title>";
-                continue;
-            }
-            $output .= $pre . self::createMetaTag($this->filterHtml($key), $this->filterHtml($tag));
-        }
-        return $output;
+        return self::createMetaTags($pre, $tags, $this->filter);
     }
 
-    /**
-     * @param $string
-     * @return string
-     */
-    protected function filterHtml($string)
+    public static function createMetaTags($pre, $tags, HtmlFilterInterface $filter = null)
     {
-        if ($this->filter) {
-            return $this->filter->filterHtml($string);
+        $output = '';
+        foreach ($tags as $key => $tag) {
+            if ($filter) {
+                $tag = $filter->filterHtml($tag);
+                $key = $filter->filterHtml($key);
+            }
+            if ($key == 'title') {
+                $output .= $pre . "<title>" . $tag . "</title>";
+                continue;
+            }
+            $output .= $pre . self::createMetaTag($key, $tag);
         }
-        return $string;
-
+        return $output;
     }
 
     /**
@@ -70,7 +66,7 @@ class MetaTagToHtmlRenderer implements HtmlRendererInterface
      * @param array  $extras
      * @return string
      */
-    protected function createMetaTag($name, $content, $extras = array())
+    public static function createMetaTag($name, $content, $extras = array())
     {
         $metaString = '';
         $metaString .= '<meta name="' . $name . '"';
