@@ -6,8 +6,8 @@ use Ibrows\SimpleSeoBundle\Model\ContentInterface;
 use Ibrows\SimpleSeoBundle\Model\ContentManagerInterface;
 use Ibrows\SimpleSeoBundle\Renderer\HtmlFilterInterface;
 use Ibrows\SimpleSeoBundle\Renderer\HtmlRendererInterface;
-use Ibrows\SimpleSeoBundle\Renderer\MetaTagToHtmlRenderer;
 use Ibrows\SimpleSeoBundle\Routing\KeyGenerator;
+use Ibrows\SimpleSeoBundle\Routing\RouteLoader;
 
 /**
  * Class TwigExtension
@@ -93,11 +93,53 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
     public function getFunctions()
     {
         return array(
-            'sseo_metatags' => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
-            'sseo_metatag'  => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
-            'scms_metatags' => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
-            'scms_metatag'  => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
+            'sseo_metatags'     => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
+            'sseo_metatag'      => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
+            'scms_metatags'     => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
+            'scms_metatag'      => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
+            'scms_canonicaltag' => new \Twig_Function_Method($this, 'canonicalTagsHtml', array('is_safe' => array('html'))),
+            'scms_canonical'    => new \Twig_Function_Method($this, 'canonical'),
         );
+    }
+
+    public function canonical($pathinfo, $uri = null)
+    {
+        if ($uri) {
+            if (!$this->keyGenerator->isAddQueryString()) {
+                //remove query string
+                if ($pos = strpos($uri, '?')) {
+                    $uri = substr($uri, 0, $pos);
+                }
+            }
+            //remove if rewrite not used
+            $uri = str_replace('app_dev.php/', '', $uri);
+            $uri = str_replace('app.php/', '', $uri);
+            return $uri;
+        }
+
+        $infos = $this->router->match($pathinfo);
+        if ($infos === false) {
+            return null;
+        }
+        if (strpos($infos['_route'], RouteLoader::ROUTE_BEGIN) === 0) {
+            $infos = RouteLoader::getPathinfo($infos['_route']);
+        }
+        $route = $infos['_route'];
+        unset($infos['_route']);
+        unset($infos['_controller']);
+        return ($this->router->generate($route, $infos, true));
+    }
+
+    public function canonicalTagsHtml($pathinfo)
+    {
+        $uri = $this->canonical($pathinfo);
+        if ($uri == null) {
+            return '';
+        }
+        if (strpos($uri, 'http://') === 0) {
+            $uri = 'https://' . substr($uri, 7);
+        }
+        return '<link rel="canonical" href="' . $uri . '" >';
     }
 
     public function metaTag($tagName = 'title')
@@ -115,7 +157,7 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
     }
 
 
-    public function metaTagsHtml($defaults = true, array $arguments = array())
+    public function metaTagsHtml($defaults = true, array $arguments = array(), $canonical = true)
     {
         $locale = $this->translator->getLocale();
         $currentLang = substr($locale, 0, 2);
@@ -127,12 +169,15 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         if ($defaults) {
             $headers .= $arguments['pre'] . '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
             $headers .= $arguments['pre'] . '<meta http-equiv="content-language" content="' . $currentLang . '" />';
-            $headers .= $arguments['pre'] . '<meta name="DC.language" scheme="RFC3066" content="'. $currentLang .'" />';
+            $headers .= $arguments['pre'] . '<meta name="DC.language" scheme="RFC3066" content="' . $currentLang . '" />';
         }
         $key = $this->keyGenerator->generateMetaTagKey($this->container->get('request'), $this->container->get('router'), $locale);
         $obj = $this->manager->findMetaTag($key, $locale);
         if ($obj) {
             $headers .= $this->metaTagToHtml($obj, $arguments);
+        }
+        if ($canonical) {
+            $headers .= $this->canonicalTagsHtml($this->getRequest()->getPathInfo());
         }
         return $headers;
     }
