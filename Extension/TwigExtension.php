@@ -166,7 +166,6 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         if (!isset($arguments['pre'])) {
             $arguments['pre'] = sprintf("\n%8s", ' ');
         }
-
         $headers = self::initMetaTagString();
         if ($defaults) {
             $headers .= $arguments['pre'] . '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
@@ -178,7 +177,9 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         if ($obj) {
             $headers .= $this->metaTagToHtml($obj, $arguments);
         }else{
-            $headers .=  MetaTagToHtmlRenderer::createMetaTags($arguments['pre'],$arguments, $this);
+            $tags = $arguments;
+            unset($tags['pre']);
+            $headers .=  MetaTagToHtmlRenderer::createMetaTags($arguments['pre'],$tags, $this);
         }
         if ($canonical) {
             $headers .=  $arguments['pre'] . $this->canonicalTagsHtml($this->getRequest()->getPathInfo());
