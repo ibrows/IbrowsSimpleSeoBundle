@@ -9,13 +9,14 @@ use Ibrows\SimpleSeoBundle\Renderer\HtmlRendererInterface;
 use Ibrows\SimpleSeoBundle\Renderer\MetaTagToHtmlRenderer;
 use Ibrows\SimpleSeoBundle\Routing\KeyGenerator;
 use Ibrows\SimpleSeoBundle\Routing\RouteLoader;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * Class TwigExtension
  */
 class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
 {
-
     /**
      * @var ContentManagerInterface
      */
@@ -117,8 +118,13 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
             $uri = str_replace('app.php/', '', $uri);
             return $uri;
         }
-
-        $infos = $this->router->match($pathinfo);
+        try{
+            $infos = $this->router->match($pathinfo);
+        }catch (ResourceNotFoundException $e){
+            $infos = false;
+        }catch (MethodNotAllowedException $e){
+            $infos = false;
+        }
         if ($infos === false) {
             return null;
         }
