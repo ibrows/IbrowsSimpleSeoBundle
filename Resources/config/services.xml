@@ -21,6 +21,8 @@
         <service id="ibrows_simple_seo.content_manager" class="%ibrows_simple_seo.content_manager.class%">
             <argument type="service" id="ibrows_simple_seo.entity_manager"/>
             <argument>%ibrows_simple_seo.entity_class%</argument>
+            <argument type="service" id="ibrows_simple_seo.key_generator"/>
+            <argument type="service" id="router"/>
         </service>
 
 
