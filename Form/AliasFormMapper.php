@@ -7,6 +7,9 @@ use Ibrows\SimpleSeoBundle\Model\AliasMapperInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Map a form to an AliasMapper
+ */
 class AliasFormMapper implements AliasMapperInterface
 {
     /**
@@ -30,6 +33,13 @@ class AliasFormMapper implements AliasMapperInterface
      */
     protected $frontendViewRouteLocale;
 
+    /**
+     * @param FormInterface $form
+     * @param $frontendViewRouteName
+     * @param array $frontendViewParameters
+     * @param null $frontendViewRouteLocale
+     * @param string $aliasProperty
+     */
     public function __construct(FormInterface $form, $frontendViewRouteName, array $frontendViewParameters = array(), $frontendViewRouteLocale = null, $aliasProperty = 'alias')
     {
         $this->form = $form;
@@ -40,6 +50,9 @@ class AliasFormMapper implements AliasMapperInterface
     }
 
 
+    /**
+     * @return mixed
+     */
     public function getAlias()
     {
         return $this->getAliasSubForm()->getData();
@@ -48,10 +61,12 @@ class AliasFormMapper implements AliasMapperInterface
     /**
      * @return FormInterface
      */
-    protected function getAliasSubForm(){
+    protected function getAliasSubForm()
+    {
         if (!$this->aliasProperty) {
             return $this->form;
         }
+
         return $this->form->get($this->aliasProperty);
     }
 
@@ -104,11 +119,17 @@ class AliasFormMapper implements AliasMapperInterface
     }
 
 
+    /**
+     * @param $message
+     */
     public function addError($message)
     {
-       $this->getAliasSubForm()->addError(new FormError($message));
+        $this->getAliasSubForm()->addError(new FormError($message));
     }
 
+    /**
+     * @param $alias
+     */
     public function setAlias($alias)
     {
         $this->getAliasSubForm()->setData($alias);

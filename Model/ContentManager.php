@@ -116,7 +116,7 @@ class ContentManager implements ContentManagerInterface
      */
     public function checkAlias(AliasMapperInterface $object)
     {
-        $checked = $this->checkIsAliasExistsAlready($object->getAlias(), $object->getFrontendViewRouteName(),$object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale() );
+        $checked = $this->checkIsAliasExistsAlready($object->getAlias(), $object->getFrontendViewRouteName(), $object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale());
         if ($checked) {
             $object->addError('allready exists');
         }
@@ -127,7 +127,7 @@ class ContentManager implements ContentManagerInterface
      */
     public function setCurrentAlias(AliasMapperInterface $object)
     {
-        $seo = $this->createNewAlias($object->getAlias(), $object->getFrontendViewRouteName(),$object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale() );
+        $seo = $this->createNewAlias($object->getAlias(), $object->getFrontendViewRouteName(), $object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale());
         $allReady = $this->findMetaTag($seo->getKeyword());
         if ($allReady) {
             $object->setAlias($allReady->getAlias());
@@ -139,7 +139,7 @@ class ContentManager implements ContentManagerInterface
      */
     public function addAlias(AliasMapperInterface $object)
     {
-        $this->addOrUpdateAlias($object->getAlias(), $object->getFrontendViewRouteName(),$object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale() );
+        $this->addOrUpdateAlias($object->getAlias(), $object->getFrontendViewRouteName(), $object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale());
     }
 
     /**
