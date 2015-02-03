@@ -22,9 +22,9 @@ interface ContentInterface
 //
 //    public function getRouteDefaults();
 //
-//    public function getAlias();
+    public function getAlias();
 //
-//    public function setAlias($alias);
+    public function setAlias($alias);
 //
 //    public function getMetaTags();
 //

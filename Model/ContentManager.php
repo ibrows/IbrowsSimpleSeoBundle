@@ -60,7 +60,94 @@ class ContentManager implements ContentManagerInterface
         $path = str_replace('/app_dev.php', '', $path);
         $key = $this->generator->generateMetaTagKeyFromRelativePath($path, $this->router, $locale);
         $object->setKeyword($key);
+
         return $object;
+    }
+
+
+    /**
+     * Returns true if there is already an alias of another path+pathParameters+locale
+     * @param $alias
+     * @param $path
+     * @param array $pathParameters
+     * @param null $locale
+     * @return ContentInterface
+     */
+    public function checkIsAliasExistsAlready($alias, $path, array $pathParameters = array(), $locale = null)
+    {
+        $already = $this->findByAlias($alias);
+        if ($already) {
+            $seo = $this->createNewAlias($alias, $path, $pathParameters, $locale);
+            if ($seo->getKeyword() == $already->getKeyword()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $alias
+     * @param $path
+     * @param array $pathParameters
+     * @param null $locale
+     * @return ContentInterface
+     */
+    public function addOrUpdateAlias($alias, $path, array $pathParameters = array(), $locale = null, $flush = true)
+    {
+        $seo = $this->createNewAlias($alias, $path, $pathParameters, $locale);
+        $allReady = $this->findMetaTag($seo->getKeyword());
+        if ($allReady) {
+            $allReady->setAlias($alias);
+            $this->em->persist($allReady);
+        } else {
+            $this->em->persist($seo);
+        }
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
+
+
+    /**
+     * @param  AliasMapperInterface $object
+     */
+    public function checkAlias(AliasMapperInterface $object)
+    {
+        $checked = $this->checkIsAliasExistsAlready($object->getAlias(), $object->getFrontendViewRouteName(),$object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale() );
+        if ($checked) {
+            $object->addError('allready exists');
+        }
+    }
+
+    /**
+     * @param AliasMapperInterface $object
+     */
+    public function setCurrentAlias(AliasMapperInterface $object)
+    {
+        $seo = $this->createNewAlias($object->getAlias(), $object->getFrontendViewRouteName(),$object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale() );
+        $allReady = $this->findMetaTag($seo->getKeyword());
+        if ($allReady) {
+            $object->setAlias($allReady->getAlias());
+        }
+    }
+
+    /**
+     * @param AliasMapperInterface $object
+     */
+    public function addAlias(AliasMapperInterface $object)
+    {
+        $this->addOrUpdateAlias($object->getAlias(), $object->getFrontendViewRouteName(),$object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale() );
+    }
+
+    /**
+     * @param EntityManager $em
+     */
+    public function setEm($em)
+    {
+        $this->em = $em;
     }
 
     /**
@@ -84,8 +171,9 @@ class ContentManager implements ContentManagerInterface
      * @param $alias
      * @return null|object
      */
-    public function findByAlias($alias){
-        return $this->getRepository()->findOneBy(array('alias'=>$alias));
+    public function findByAlias($alias)
+    {
+        return $this->getRepository()->findOneBy(array('alias' => $alias));
     }
 
     /**

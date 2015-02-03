@@ -11,7 +11,7 @@ Install & setup the bundle
 
 
     ``` bash
-    $ php composer.phar require ibrows/simple-seo-bundle "~1.2"
+    $ php composer.phar require ibrows/simple-seo-bundle "~2.0@dev"
     ```
 	
 	Composer will install the bundle to your project's `ibrows/simple-seo-bundle` directory.
