@@ -21,6 +21,19 @@ interface AliasMapperInterface
     public function getFrontendViewParameters();
 
     /**
+     * @param string $key
+     * @return bool
+     */
+    public function hasFrontendViewParameter($key);
+
+    /**
+     * @param string $key
+     * @param null|int|string $default
+     * @return null|int|string
+     */
+    public function getFrontendViewParameter($key, $default = null);
+
+    /**
      * @return string
      */
     public function getFrontendViewRouteLocale();

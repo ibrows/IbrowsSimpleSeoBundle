@@ -51,7 +51,7 @@ class AliasFormMapper implements AliasMapperInterface
 
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAlias()
     {
@@ -103,6 +103,34 @@ class AliasFormMapper implements AliasMapperInterface
     }
 
     /**
+     * @param string $key
+     * @param null|int|string $value
+     */
+    public function setFrontendViewParameter($key, $value)
+    {
+        $this->frontendViewParameters[$key] = $value;
+    }
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function hasFrontendViewParameter($key)
+    {
+        return isset($this->frontendViewParameters[$key]);
+    }
+
+    /**
+     * @param string $key
+     * @param null|int|string $default
+     * @return null|int|string
+     */
+    public function getFrontendViewParameter($key, $default = null)
+    {
+        return isset($this->frontendViewParameters[$key]) ? $this->frontendViewParameters[$key] : $default;
+    }
+
+    /**
      * @return string
      */
     public function getFrontendViewRouteLocale()
@@ -120,7 +148,7 @@ class AliasFormMapper implements AliasMapperInterface
 
 
     /**
-     * @param $message
+     * @param string $message
      */
     public function addError($message)
     {
@@ -128,7 +156,7 @@ class AliasFormMapper implements AliasMapperInterface
     }
 
     /**
-     * @param $alias
+     * @param string $alias
      */
     public function setAlias($alias)
     {
