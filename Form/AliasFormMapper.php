@@ -117,7 +117,7 @@ class AliasFormMapper implements AliasMapperInterface
      */
     public function hasFrontendViewParameter($key)
     {
-        return isset($this->frontendViewParameters[$key]);
+        return array_key_exists($key, $this->frontendViewParameters);
     }
 
     /**
@@ -127,7 +127,7 @@ class AliasFormMapper implements AliasMapperInterface
      */
     public function getFrontendViewParameter($key, $default = null)
     {
-        return isset($this->frontendViewParameters[$key]) ? $this->frontendViewParameters[$key] : $default;
+        return array_key_exists($key, $this->frontendViewParameters) ? $this->frontendViewParameters[$key] : $default;
     }
 
     /**
