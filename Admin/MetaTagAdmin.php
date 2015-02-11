@@ -2,7 +2,6 @@
 
 namespace Ibrows\SimpleSeoBundle\Admin;
 
-
 use Ibrows\SimpleSeoBundle\Entity\MetaTagContent;
 use Ibrows\SimpleSeoBundle\Model\ContentInterface;
 use Ibrows\SimpleSeoBundle\Routing\KeyGenerator;
@@ -58,6 +57,51 @@ class MetaTagAdmin extends Admin
     }
 
     /**
+     * @return string
+     */
+    public function getUriTemplate()
+    {
+        return $this->uriTemplate;
+    }
+
+    /**
+     * @param string $uriTemplate
+     */
+    public function setUriTemplate($uriTemplate)
+    {
+        $this->uriTemplate = $uriTemplate;
+    }
+
+    /**
+     * @param ContentInterface $content
+     * @param bool $originUrl
+     * @return string
+     */
+    public function getUrl(ContentInterface $content, $originUrl = true)
+    {
+        if (!$info = $content->getPathInfo()) {
+            return null;
+        }
+        $router = $this->getRouter();
+
+        try {
+            $parameters = $info['__defaults'];
+            foreach ($info as $key => $value) {
+                if (strpos($key, '_') === 0) {
+                    continue;
+                }
+                $parameters[$key] = $value;
+            }
+            if ($originUrl) {
+                $parameters[UrlGenerator::GENERATE_NORMAL_ROUTE] = true;
+            }
+            return $router->generate($info['_route'], $parameters);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
      * (non-PHPdoc)
      *
      * @see \Sonata\AdminBundle\Admin\Admin::configureRoutes()
@@ -69,7 +113,6 @@ class MetaTagAdmin extends Admin
             $collection->remove('create');
         }
     }
-
 
     /**
      * (non-PHPdoc)
@@ -90,58 +133,6 @@ class MetaTagAdmin extends Admin
         }
 
     }
-
-    /**
-     * @return string
-     */
-    public function getUriTemplate()
-    {
-        return $this->uriTemplate;
-    }
-
-    /**
-     * @param string $uriTemplate
-     */
-    public function setUriTemplate($uriTemplate)
-    {
-        $this->uriTemplate = $uriTemplate;
-    }
-
-    /**
-     * @return RouterInterface
-     */
-    protected function getRouter()
-    {
-        return $this->getConfigurationPool()->getContainer()->get('router');
-    }
-
-    /**
-     * @param ContentInterface $content
-     * @param bool             $originUrl
-     * @return string
-     */
-    public function getUrl(ContentInterface $content, $originUrl = true)
-    {
-        $info = $content->getPathInfo();
-        $router = $this->getRouter();
-
-        try {
-            $parameters = $info['__defaults'];
-            foreach ($info as $key => $value) {
-                if (strpos($key, '_') === 0) {
-                    continue;
-                }
-                $parameters[$key] = $value;
-            }
-            if ($originUrl) {
-                $parameters[UrlGenerator::GENERATE_NORMAL_ROUTE] = true;
-            }
-            return $router->generate($info['_route'], $parameters);
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
 
     /**
      * (non-PHPdoc)
@@ -174,7 +165,6 @@ class MetaTagAdmin extends Admin
         $filter->add("alias");
     }
 
-
     /**
      * (non-PHPdoc)
      *
@@ -191,5 +181,13 @@ class MetaTagAdmin extends Admin
         $form->add('description', 'textarea', array());
         $form->add('metatags', 'textarea', array('label' => 'additional metatags'));
         $form->setHelps(array('metatags' => 'help.metatags'));
+    }
+
+    /**
+     * @return RouterInterface
+     */
+    protected function getRouter()
+    {
+        return $this->getConfigurationPool()->getContainer()->get('router');
     }
 } 
