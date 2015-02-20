@@ -31,9 +31,9 @@ class ContentManager implements ContentManagerInterface
 
 
     /**
-     * @param EntityManager $em
-     * @param string $entityClass
-     * @param KeyGenerator $generator
+     * @param EntityManager   $em
+     * @param string          $entityClass
+     * @param KeyGenerator    $generator
      * @param RouterInterface $router
      */
     public function __construct(EntityManager $em, $entityClass, KeyGenerator $generator, RouterInterface $router)
@@ -45,10 +45,10 @@ class ContentManager implements ContentManagerInterface
     }
 
     /**
-     * @param $alias
-     * @param $path
+     * @param       $alias
+     * @param       $path
      * @param array $pathParameters
-     * @param null $locale
+     * @param null  $locale
      * @return ContentInterface
      */
     public function createNewAlias($alias, $path, array $pathParameters = array(), $locale = null)
@@ -67,14 +67,17 @@ class ContentManager implements ContentManagerInterface
 
     /**
      * Returns true if there is already an alias of another path+pathParameters+locale
-     * @param $alias
-     * @param $path
+     * @param       $alias
+     * @param       $path
      * @param array $pathParameters
-     * @param null $locale
+     * @param null  $locale
      * @return ContentInterface
      */
     public function checkIsAliasExistsAlready($alias, $path, array $pathParameters = array(), $locale = null)
     {
+        if ($alias === null) {
+            return false;
+        }
         $already = $this->findByAlias($alias);
         if ($already) {
             $seo = $this->createNewAlias($alias, $path, $pathParameters, $locale);
@@ -89,10 +92,10 @@ class ContentManager implements ContentManagerInterface
     }
 
     /**
-     * @param $alias
-     * @param $path
+     * @param       $alias
+     * @param       $path
      * @param array $pathParameters
-     * @param null $locale
+     * @param null  $locale
      * @return ContentInterface
      */
     public function addOrUpdateAlias($alias, $path, array $pathParameters = array(), $locale = null, $flush = true)
@@ -103,6 +106,10 @@ class ContentManager implements ContentManagerInterface
             $allReady->setAlias($alias);
             $this->em->persist($allReady);
         } else {
+            if ($alias == null) {
+                // no alias to add
+                return;
+            }
             $this->em->persist($seo);
         }
         if ($flush) {
