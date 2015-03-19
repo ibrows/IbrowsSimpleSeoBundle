@@ -6,7 +6,7 @@ namespace Ibrows\SimpleSeoBundle\Model;
 /**
  * Interface ContentManagerInterface
  */
-interface ContentManagerInterface
+interface ContentManagerInterface extends AliasExistsInterface
 {
     /**
      * @return ContentInterface[]

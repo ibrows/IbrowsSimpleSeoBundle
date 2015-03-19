@@ -64,7 +64,6 @@ class ContentManager implements ContentManagerInterface
         return $object;
     }
 
-
     /**
      * Returns true if there is already an alias of another path+pathParameters+locale
      * @param       $alias
@@ -181,6 +180,14 @@ class ContentManager implements ContentManagerInterface
     public function findByAlias($alias)
     {
         return $this->getRepository()->findOneBy(array('alias' => $alias));
+    }
+
+    /**
+     * @return boolean
+     */
+    public function aliasExists($alias)
+    {
+        return ($this->findByAlias($alias) != null);
     }
 
     /**
