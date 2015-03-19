@@ -14,10 +14,10 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
         return array(
             array(array('blah', 'foo', 'moo', 'ich', 'will', 'aber', 'lieber', 'nicht'), array('blah foo', 'moo', 'ich will, aber lieber nicht!')),
             array(array('abc'), array('abc')),
-            array(array('a','b','c'), array(' a b c ')),
+            array(array('a', 'b', 'c'), array(' a b c ')),
             array(array(), array('')),
             array(array('ichBinNichtDu'), array('ichBinNichtDu')),
-            array(array('ichBin','NichtDu'), array('ichBin....NichtDu')),
+            array(array('ichBin', 'NichtDu'), array('ichBin....NichtDu')),
         );
     }
 
@@ -38,11 +38,11 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
     public function provideUniquify()
     {
         return array(
-            array( 1, 'a-0', 'a'),
-            array( 2, 'a-1', 'a'),
-            array( 101, 'a-100', 'a'),
-            array( 1,'blahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafoo-0', 'blahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafoooo'),
-            array( 1001,'blahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblaha-1000', 'blahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafoooo'),
+            array(1, 'a', 'a'),
+            array(2, 'a-0', 'a'),
+            array(102, 'a-100', 'a'),
+            array(2, 'blahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafoo-0', 'blahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafoooo'),
+            array(1002, 'blahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblaha-1000', 'blahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafooooblahafoooo'),
         );
     }
 
@@ -56,13 +56,22 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
         $generator = new AliasStringGenerator();
         $method = new \ReflectionMethod(get_class($generator), 'uniquify');
         $method->setAccessible(true);
+
+        $this->assertEquals($expected, $method->invoke($generator, $input, $this->mockAlias($aliasExistsCount)));
+    }
+
+    protected function mockAlias($aliasExistsCount)
+    {
         $aliasMock = $this->getMock('Ibrows\SimpleSeoBundle\Model\AliasExistsInterface');
         $count = 0;
-        $func = function() use (&$count,$aliasExistsCount){$count++;return $count < $aliasExistsCount;};
+        $func = function () use (&$count, $aliasExistsCount) {
+            $count++;
+            return $count < $aliasExistsCount;
+        };
         $aliasMock->expects($this->exactly($aliasExistsCount))->method('aliasExists')->will(
             $this->returnCallback($func)
         );
-        $this->assertEquals($expected, $method->invoke($generator, $input,$aliasMock));
+        return $aliasMock;
     }
 
 
@@ -91,6 +100,25 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
         $method = new \ReflectionMethod(get_class($generator), 'generate');
         $method->setAccessible(true);
         $this->assertEquals($expected, $method->invoke($generator, $input));
+    }
+
+
+    public function testGenerateAliasString()
+    {
+        $expected = 'blah/foo';
+        $input = array('a' => 'BlaH', 'b' => 'Foo');
+        $generator = new AliasStringGenerator();
+        $this->assertEquals($expected, $generator->generateAliasString($input));
+        $this->assertEquals($expected . '-9', $generator->generateAliasString($input, $this->mockAlias(11)));
+        $generator->setSortOrder(array('b'));
+        $this->assertEquals('foo/blah', $generator->generateAliasString($input));
+        $input = array('a' => 'a', 'b' => 'b', 'c' => 'c', 'd' => 'd');
+        $generator->setSortOrder(array('b','a','c'));
+        $this->assertEquals('b/a/c/d', $generator->generateAliasString($input));
+        $generator->setSortOrder(array('a','c','d'));
+        $this->assertEquals('a/c/d/b', $generator->generateAliasString($input));
+
+
     }
 
 
