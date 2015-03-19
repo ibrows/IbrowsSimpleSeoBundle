@@ -25,23 +25,30 @@ class ContentManager implements ContentManagerInterface
     protected $generator;
 
     /**
+     * @var AliasStringGenerator
+     */
+    protected $aliasStringGenerator;
+
+    /**
      * @var RouterInterface
      */
     protected $router;
 
 
     /**
-     * @param EntityManager   $em
-     * @param string          $entityClass
-     * @param KeyGenerator    $generator
-     * @param RouterInterface $router
+     * @param EntityManager        $em
+     * @param string               $entityClass
+     * @param KeyGenerator         $generator
+     * @param RouterInterface      $router
+     * @param AliasStringGenerator $stringGenerator
      */
-    public function __construct(EntityManager $em, $entityClass, KeyGenerator $generator, RouterInterface $router)
+    public function __construct(EntityManager $em, $entityClass, KeyGenerator $generator, RouterInterface $router, AliasStringGenerator $stringGenerator)
     {
         $this->em = $em;
         $this->generator = $generator;
         $this->entityClass = $entityClass;
         $this->router = $router;
+        $this->aliasStringGenerator = $stringGenerator;
     }
 
     /**
@@ -62,6 +69,25 @@ class ContentManager implements ContentManagerInterface
         $object->setKeyword($key);
 
         return $object;
+    }
+
+    /**
+     * gets back a currently non-existing generated alias, from the given arguments
+     * @param array $arguments
+     * @return string
+     */
+    public function createAliasString( array $arguments){
+        return $this->aliasStringGenerator->generateAliasString($arguments,$this);
+    }
+
+
+    /**
+     *  gets back a currently non-existing generated alias, from the given object
+     * @param AliasGeneratorArgumentsInterface $aliasGeneratorArguments
+     * @return string
+     */
+    public function createAliasStringFromObject(AliasGeneratorArgumentsInterface $aliasGeneratorArguments){
+        return $this->createAliasString($aliasGeneratorArguments->getAliasArguments());
     }
 
     /**
@@ -187,7 +213,7 @@ class ContentManager implements ContentManagerInterface
      */
     public function aliasExists($alias)
     {
-        return ($this->findByAlias($alias) != null);
+        return  ($this->findByAlias($alias) != null);
     }
 
     /**

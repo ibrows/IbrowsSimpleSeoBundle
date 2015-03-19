@@ -3,6 +3,7 @@
 namespace Ibrows\SimpleSeoBundle\Form;
 
 
+use Ibrows\SimpleSeoBundle\Model\AliasGeneratorArgumentsInterface;
 use Ibrows\SimpleSeoBundle\Model\AliasMapperInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -10,7 +11,7 @@ use Symfony\Component\Form\FormInterface;
 /**
  * Map a form to an AliasMapper
  */
-class AliasFormMapper implements AliasMapperInterface
+class AliasFormMapper implements AliasMapperInterface, AliasGeneratorArgumentsInterface
 {
     /**
      * @var FormInterface
@@ -28,10 +29,16 @@ class AliasFormMapper implements AliasMapperInterface
      * @var array
      */
     protected $frontendViewParameters;
+
     /**
      * @var string
      */
     protected $frontendViewRouteLocale;
+
+    /**
+     * @var array
+     */
+    protected $aliasGeneratorArgumentProperties;
 
     /**
      * @param FormInterface $form
@@ -162,4 +169,29 @@ class AliasFormMapper implements AliasMapperInterface
     {
         $this->getAliasSubForm()->setData($alias);
     }
+
+    /**
+     * @param array $aliasGeneratorArgumentProperties
+     */
+    public function setAliasGeneratorArgumentProperties(array $aliasGeneratorArgumentProperties = null)
+    {
+        $this->aliasGeneratorArgumentProperties = $aliasGeneratorArgumentProperties;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAliasArguments()
+    {
+        if(!$this->aliasGeneratorArgumentProperties){
+            return null;
+        }
+        $args = array();
+        foreach($this->aliasGeneratorArgumentProperties as $property){
+            $args[] = (string)$this->form->get($property)->getData();
+        }
+        return $args;
+    }
+
+
 }

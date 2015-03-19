@@ -11,6 +11,7 @@
         <parameter key="ibrows_simple_seo.routing_loader.class">Ibrows\SimpleSeoBundle\Routing\RouteLoader</parameter>
         <parameter key="ibrows_simple_seo.routing_aliashandler.class">Ibrows\SimpleSeoBundle\Routing\AliasHandler</parameter>
         <parameter key="ibrows_simple_seo.key_generator.class">Ibrows\SimpleSeoBundle\Routing\KeyGenerator</parameter>
+        <parameter key="ibrows_simple_seo.aliasstringgenerator.class">Ibrows\SimpleSeoBundle\Model\AliasStringGenerator</parameter>
     </parameters>
     <services>
 
@@ -18,11 +19,14 @@
 
         <service id="ibrows_simple_seo.meta_tag_renderer" class="%ibrows_simple_seo.meta_tag_renderer.class%"/>
 
+        <service  id="ibrows_simple_seo.aliasstringgenerator" class="%ibrows_simple_seo.aliasstringgenerator.class%"/>
+
         <service id="ibrows_simple_seo.content_manager" class="%ibrows_simple_seo.content_manager.class%">
             <argument type="service" id="ibrows_simple_seo.entity_manager"/>
             <argument>%ibrows_simple_seo.entity_class%</argument>
             <argument type="service" id="ibrows_simple_seo.key_generator"/>
             <argument type="service" id="router"/>
+            <argument type="service" id="ibrows_simple_seo.aliasstringgenerator"/>
         </service>
 
 

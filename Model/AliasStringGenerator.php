@@ -137,7 +137,7 @@ class AliasStringGenerator
     {
         $i = 0;
         $newAlias = $alias;
-        while ($aliasExists != null && $aliasExists->aliasExists($alias)) {
+        while ($aliasExists != null && $aliasExists->aliasExists($newAlias)) {
             $unique_suffix = $this->separatorUnique . $i;
             $newAlias = mb_substr($alias, 0, $this->maxLength - strlen($unique_suffix)) . $unique_suffix;
             $i++;
