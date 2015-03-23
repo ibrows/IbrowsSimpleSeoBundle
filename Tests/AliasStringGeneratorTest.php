@@ -79,6 +79,8 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array('blah/foo', array('BlaH', 'Foo')),
+            array('blah/foo', array('BlaH/', '/Foo')),
+            array('blah/foo', array('BlaH/', '/', '/', '///', '/', '/Foo')),
             array('blah/foo', array('BlaH', 'Foo ')),
             array('blah/foo', array('BlaH', ' F o o ')),
             array('blah/foo', array('BlaH', ' F o o ')),

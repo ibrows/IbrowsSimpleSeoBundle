@@ -72,6 +72,9 @@ class AliasStringGenerator
         $string = '';
         while ($token = array_pop($tokens)) {
             $token = str_replace($this->separator, '', $token);
+            if ($token == '') {
+                continue;
+            }
             $token = $this->clean($token);
             $string = $token . $this->separator . $string;
         }
