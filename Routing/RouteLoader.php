@@ -60,8 +60,11 @@ class RouteLoader extends FileLoader
                 $pathinfo = $metatag['pathinfo'];
             }else{
                 $pathinfo = unserialize($metatag['pathinfo']);
-            }    
+            }
             $oldroute = $pathinfo['_route'];
+            if(!is_array($pathinfo) || !isset($pathinfo['_route']) || !isset($metatag['alias'])){
+                continue;
+            }
 
             //add defaults to routealias
             if(isset($pathinfo['__defaults']) && is_array($pathinfo['__defaults'])){
