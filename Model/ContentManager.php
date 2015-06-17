@@ -4,6 +4,7 @@ namespace Ibrows\SimpleSeoBundle\Model;
 
 use Doctrine\ORM\EntityManager;
 use Ibrows\SimpleSeoBundle\Routing\KeyGenerator;
+use Ibrows\SimpleSeoBundle\Routing\UrlGenerator;
 use Symfony\Component\Routing\RouterInterface;
 
 class ContentManager implements ContentManagerInterface
@@ -63,6 +64,7 @@ class ContentManager implements ContentManagerInterface
         $rc = new \ReflectionClass($this->entityClass);
         $object = $rc->newInstance();
         $object->setAlias($alias);
+        $pathParameters[UrlGenerator::GENERATE_NORMAL_ROUTE] = true;
         $path = $this->router->generate($path, $pathParameters);
         $path = str_replace('/app_dev.php', '', $path);
         $key = $this->generator->generateMetaTagKeyFromRelativePath($path, $this->router, $locale);
