@@ -34,17 +34,17 @@ interface ContentInterface
 //
 //    public function setMetaTag($metaTag, $value);
 //
-//    public function getTitle();
+    public function getTitle();
 //
-//    public function setTitle($title);
+    public function setTitle($title);
 //
-//    public function getKeywords();
+    public function getKeywords();
 //
-//    public function setKeywords($keywords);
+    public function setKeywords($keywords);
 //
-//    public function getDescription();
+    public function getDescription();
 //
-//    public function setDescription($description);
+    public function setDescription($description);
 //
 //    public function toHTML($filter, array $args);
 //
@@ -62,7 +62,7 @@ interface ContentInterface
      *
      * @param string $keyword
      */
-//    public function setKeyword($keyword);
+    public function setKeyword($keyword);
 
     /**
      * Get keyword

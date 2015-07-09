@@ -37,38 +37,65 @@ class ContentManager implements ContentManagerInterface
 
 
     /**
-     * @param EntityManager        $em
-     * @param string               $entityClass
-     * @param KeyGenerator         $generator
-     * @param RouterInterface      $router
+     * @param EntityManager $em
+     * @param string $entityClass
+     * @param KeyGenerator $generator
+     * @param RouterInterface $router
      * @param AliasStringGenerator $stringGenerator
+     * @throws \Exception
      */
     public function __construct(EntityManager $em, $entityClass, KeyGenerator $generator, RouterInterface $router, AliasStringGenerator $stringGenerator)
     {
         $this->em = $em;
-        $this->generator = $generator;
+        if(!$this->implementsContentInterface($entityClass)){
+            throw new \Exception("The Entity Class '$entityClass' must implement the 'ContentInterface'");
+        }
         $this->entityClass = $entityClass;
+        $this->generator = $generator;
         $this->router = $router;
         $this->aliasStringGenerator = $stringGenerator;
     }
 
     /**
-     * @param       $alias
-     * @param       $path
-     * @param array $pathParameters
-     * @param null  $locale
-     * @return ContentInterface
+     * @param $className
+     * @return bool
      */
-    public function createNewAlias($alias, $path, array $pathParameters = array(), $locale = null)
+    protected function implementsContentInterface($className)
+    {
+        $rc = new \ReflectionClass($className);
+        if($rc->implementsInterface('Ibrows\SimpleSeoBundle\Model\ContentInterface')){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param $alias
+     * @param $path
+     * @param array $pathParameters
+     * @param null $locale
+     * @param null $title
+     * @param null $keywords
+     * @param null $description
+     * @return ContentInterface
+     * @internal param array $metatags
+     */
+    public function createNewAlias($alias, $path, array $pathParameters = array(), $locale = null, $title = null, $keywords = null, $description = null)
     {
         $rc = new \ReflectionClass($this->entityClass);
         $object = $rc->newInstance();
+        if(!$object instanceof ContentInterface){
+            return;
+        }
         $object->setAlias($alias);
         $pathParameters[UrlGenerator::GENERATE_NORMAL_ROUTE] = true;
         $path = $this->router->generate($path, $pathParameters);
         $path = str_replace('/app_dev.php', '', $path);
         $key = $this->generator->generateMetaTagKeyFromRelativePath($path, $this->router, $locale);
         $object->setKeyword($key);
+        $object->setTitle($title);
+        $object->setKeywords($keywords);
+        $object->setDescription($description);
 
         return $object;
     }
@@ -119,18 +146,25 @@ class ContentManager implements ContentManagerInterface
     }
 
     /**
-     * @param       $alias
-     * @param       $path
+     * @param $alias
+     * @param $path
      * @param array $pathParameters
-     * @param null  $locale
+     * @param null $locale
+     * @param bool $flush
+     * @param null $title
+     * @param null $keywords
+     * @param null $description
      * @return ContentInterface
      */
-    public function addOrUpdateAlias($alias, $path, array $pathParameters = array(), $locale = null, $flush = true)
+    public function addOrUpdateAlias($alias, $path, array $pathParameters = array(), $locale = null, $flush = true, $title = null, $keywords = null, $description = null)
     {
-        $seo = $this->createNewAlias($alias, $path, $pathParameters, $locale);
+        $seo = $this->createNewAlias($alias, $path, $pathParameters, $locale, $title, $keywords, $description);
         $allReady = $this->findMetaTag($seo->getKeyword());
         if ($allReady) {
             $allReady->setAlias($alias);
+            $allReady->setTitle($title);
+            $allReady->setKeywords($keywords);
+            $allReady->setDescription($description);
             $this->em->persist($allReady);
         } else {
             if ($alias == null) {
@@ -144,6 +178,17 @@ class ContentManager implements ContentManagerInterface
         }
     }
 
+    public function setCurrentMetaTagContent(ContentMapperInterface $object)
+    {
+        $seo = $this->createNewAlias($object->getAlias(), $object->getFrontendViewRouteName(), $object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale(), $object->getTitle(), $object->getKeywords(), $object->getDescription());
+        $allReady = $this->findMetaTag($seo->getKeyword());
+        if ($allReady) {
+            $object->setAlias($allReady->getAlias());
+            $object->setTitle($allReady->getTitle());
+            $object->setKeywords($allReady->getKeywords());
+            $object->setDescription($allReady->getDescription());
+        }
+    }
 
     /**
      * @param  AliasMapperInterface $object
@@ -174,6 +219,11 @@ class ContentManager implements ContentManagerInterface
     public function addAlias(AliasMapperInterface $object)
     {
         $this->addOrUpdateAlias($object->getAlias(), $object->getFrontendViewRouteName(), $object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale());
+    }
+
+    public function addMetaTagContent(ContentMapperInterface $object)
+    {
+        $this->addOrUpdateAlias($object->getAlias(), $object->getFrontendViewRouteName(), $object->getFrontendViewParameters(), $object->getFrontendViewRouteLocale(), true, $object->getTitle(), $object->getKeywords(), $object->getDescription());
     }
 
     /**
