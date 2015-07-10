@@ -88,10 +88,9 @@ class KeyGenerator
             // allready alias, get the base pathinfo
             $oldInfo = RouteLoader::getPathinfo($info['_route']);
             $oldRoute = $oldInfo['_route'];
-            unset($info['_route']);
-            unset($info['__defaults']);
-            $info[UrlGenerator::GENERATE_NORMAL_ROUTE] = true;
-            $pathInfo = $router->generate($oldRoute, $info);
+            unset($oldInfo['_route']);
+            $oldInfo[UrlGenerator::GENERATE_NORMAL_ROUTE] = true;
+            $pathInfo = $router->generate($oldRoute, $oldInfo);
             $pathInfo = str_replace('/app_dev.php', '', $pathInfo);
             $pathInfo = preg_replace('!([^?]*)(\?_locale=[^&]*)!', '$1', $pathInfo);
         }
