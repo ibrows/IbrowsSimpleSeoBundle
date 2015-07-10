@@ -2,13 +2,10 @@
 
 namespace IbrowsSimpleSeoBundle\Tests;
 
-use Doctrine\ORM\Query;
 use Ibrows\SimpleSeoBundle\Model\AliasStringGenerator;
 
 class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-
-
     public function provideTokens()
     {
         return array(
@@ -23,6 +20,7 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideTokens
+     *
      * @param $expected
      * @param $input
      */
@@ -33,7 +31,6 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
         $this->assertEquals($expected, $method->invoke($generator, $input));
     }
-
 
     public function provideUniquify()
     {
@@ -48,6 +45,7 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideUniquify
+     *
      * @param $expected
      * @param $input
      */
@@ -65,15 +63,16 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
         $aliasMock = $this->getMock('Ibrows\SimpleSeoBundle\Model\AliasExistsInterface');
         $count = 0;
         $func = function () use (&$count, $aliasExistsCount) {
-            $count++;
+            ++$count;
+
             return $count < $aliasExistsCount;
         };
         $aliasMock->expects($this->exactly($aliasExistsCount))->method('aliasExists')->will(
             $this->returnCallback($func)
         );
+
         return $aliasMock;
     }
-
 
     public function provideGenerate()
     {
@@ -93,6 +92,7 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideGenerate
+     *
      * @param $expected
      * @param $input
      */
@@ -104,24 +104,19 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $method->invoke($generator, $input));
     }
 
-
     public function testGenerateAliasString()
     {
         $expected = 'blah/foo';
         $input = array('a' => 'BlaH', 'b' => 'Foo');
         $generator = new AliasStringGenerator();
         $this->assertEquals($expected, $generator->generateAliasString($input));
-        $this->assertEquals($expected . '-9', $generator->generateAliasString($input, $this->mockAlias(11)));
+        $this->assertEquals($expected.'-9', $generator->generateAliasString($input, $this->mockAlias(11)));
         $generator->setSortOrder(array('b'));
         $this->assertEquals('foo/blah', $generator->generateAliasString($input));
         $input = array('a' => 'a', 'b' => 'b', 'c' => 'c', 'd' => 'd');
-        $generator->setSortOrder(array('b','a','c'));
+        $generator->setSortOrder(array('b', 'a', 'c'));
         $this->assertEquals('b/a/c/d', $generator->generateAliasString($input));
-        $generator->setSortOrder(array('a','c','d'));
+        $generator->setSortOrder(array('a', 'c', 'd'));
         $this->assertEquals('a/c/d/b', $generator->generateAliasString($input));
-
-
     }
-
-
 }

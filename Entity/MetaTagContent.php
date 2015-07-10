@@ -13,7 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 class MetaTagContent implements ContentInterface
 {
     /**
-     * @var integer $id
+     * @var int
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -21,41 +21,36 @@ class MetaTagContent implements ContentInterface
     protected $id;
 
     /**
-     * @var $metatags
+     * @var
      * @ORM\Column(type="array")
-     *
      */
     protected $metatags;
     protected static $metatagPreventKeys = array('title', 'keywords', 'description');
 
     /**
-     * @var string $alias
+     * @var string
      *
      * @ORM\Column(name="alias", type="string", length=255, unique=true, nullable=true)
      */
     protected $alias = null;
 
     /**
-     * @var $pathinfo
+     * @var
      * @ORM\Column(name="pathinfo", type="array")
-     *
      */
     protected $pathinfo;
 
-
     /**
-     * @var string $keyword
+     * @var string
      *
      * @ORM\Column(name="keyword", type="string", length=255, unique=true)
      */
     protected $keyword;
 
     /**
-     * @var \Symfony\Component\DependencyInjection\ContainerInterface $params
-     *
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface
      */
     protected $params;
-
 
     protected $changedPathInfo = false;
 
@@ -75,13 +70,12 @@ class MetaTagContent implements ContentInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isChangedPathInfo()
     {
         return $this->changedPathInfo;
     }
-
 
     public function setRouteDefaults(array $defaults)
     {
@@ -93,9 +87,9 @@ class MetaTagContent implements ContentInterface
         if (array_key_exists('__defaults', $this->pathinfo) && is_array($this->pathinfo['__defaults'])) {
             return $this->pathinfo['__defaults'];
         }
+
         return array();
     }
-
 
     public function getAlias()
     {
@@ -125,6 +119,7 @@ class MetaTagContent implements ContentInterface
         if (!is_array($this->metatags)) {
             return array();
         }
+
         return $this->metatags;
     }
 
@@ -138,6 +133,7 @@ class MetaTagContent implements ContentInterface
                 }
             }
         }
+
         return $return;
     }
 
@@ -158,17 +154,16 @@ class MetaTagContent implements ContentInterface
     public function getMetatag($metatag)
     {
         if (!isset($this->metatags[$metatag])) {
-            return null;
+            return;
         }
+
         return $this->metatags[$metatag];
     }
-
 
     public function getHtmlRenderServiceId()
     {
         return 'ibrows_simple_seo.meta_tag_renderer';
     }
-
 
     // <editor-fold desc="Simple Getter Setter" defaultstate="collapsed" >
 
@@ -195,7 +190,6 @@ class MetaTagContent implements ContentInterface
     {
         $this->keyword = $keyword;
     }
-
 
     public function setMetatag($metatag, $value)
     {
@@ -244,8 +238,6 @@ class MetaTagContent implements ContentInterface
 
     public function toHTML($filter, array $args)
     {
-        throw new \Exception("use HTML Renderer");
+        throw new \Exception('use HTML Renderer');
     }
-
-
 }

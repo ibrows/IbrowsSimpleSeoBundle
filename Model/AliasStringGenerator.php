@@ -1,20 +1,18 @@
 <?php
+
 /**
  * Created by iBROWS AG.
  * Date: 19.03.15
- * Time: 14:28
+ * Time: 14:28.
  */
 
 namespace Ibrows\SimpleSeoBundle\Model;
 
-
 /**
- * Class AliasStringGenerator
- * @package Ibrows\SimpleSeoBundle\Model
+ * Class AliasStringGenerator.
  */
 class AliasStringGenerator
 {
-
     /**
      * @var array
      */
@@ -35,6 +33,7 @@ class AliasStringGenerator
     /**
      * @param array                $arguments
      * @param AliasExistsInterface $aliasExists
+     *
      * @return string
      */
     public function generateAliasString(array $arguments, AliasExistsInterface $aliasExists = null)
@@ -45,8 +44,8 @@ class AliasStringGenerator
         $tokens = $this->getTokens($arguments);
         $alias = $this->generate($tokens);
         $alias = $this->uniquify($alias, $aliasExists);
-        return $alias;
 
+        return $alias;
     }
 
     protected function sort($a, $b)
@@ -59,12 +58,13 @@ class AliasStringGenerator
         if ($resulta === false || ($resultb !== false && $resulta > $resultb)) {
             return 1;
         }
+
         return -1;
     }
 
-
     /**
      * @param array $tokens
+     *
      * @return string
      */
     protected function generate(array $tokens)
@@ -76,15 +76,17 @@ class AliasStringGenerator
                 continue;
             }
             $token = $this->clean($token);
-            $string = $token . $this->separator . $string;
+            $string = $token.$this->separator.$string;
         }
         $string = mb_substr($string, 0, -1);
         $string = mb_substr($string, 0, $this->maxLength);
+
         return $string;
     }
 
     /**
      * @param array $arguments
+     *
      * @return array
      */
     protected function getTokens(array $arguments)
@@ -94,13 +96,15 @@ class AliasStringGenerator
             $argumentTokens = preg_split('/([\s.,!])+/', $argument);
             $tokens = array_merge($tokens, $argumentTokens);
         }
+
         return array_values(array_filter($tokens));
     }
 
-
     /**
      * @param $string
+     *
      * @return string
+     *
      * @throws \Exception
      */
     protected function clean($string)
@@ -110,12 +114,15 @@ class AliasStringGenerator
         $string = $this->translit($string);
         $string = strtolower($string);
         $string = preg_replace('![^-a-z0-9_]+!', '', $string);
+
         return $string;
     }
 
     /**
      * @param $string
+     *
      * @return string
+     *
      * @throws \Exception
      */
     protected function translit($string)
@@ -125,15 +132,17 @@ class AliasStringGenerator
             $string = preg_replace('!([^0-9a-zA-Z\.,:;()/-_\s])!', '', $string); // use more explicit statement, alphanum dont do the job
             $stringOutput = (@iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $string));
             if ($stringOutput === false) {
-                throw new \Exception('Cant convert ' . $string);
+                throw new \Exception('Cant convert '.$string);
             }
         }
+
         return $stringOutput;
     }
 
     /**
-     * @param  string              $alias
+     * @param string               $alias
      * @param AliasExistsInterface $aliasExists
+     *
      * @return string
      */
     protected function uniquify($alias, AliasExistsInterface $aliasExists = null)
@@ -141,10 +150,11 @@ class AliasStringGenerator
         $i = 0;
         $newAlias = $alias;
         while ($aliasExists != null && $aliasExists->aliasExists($newAlias)) {
-            $unique_suffix = $this->separatorUnique . $i;
-            $newAlias = mb_substr($alias, 0, $this->maxLength - strlen($unique_suffix)) . $unique_suffix;
-            $i++;
+            $unique_suffix = $this->separatorUnique.$i;
+            $newAlias = mb_substr($alias, 0, $this->maxLength - strlen($unique_suffix)).$unique_suffix;
+            ++$i;
         }
+
         return $newAlias;
     }
 
@@ -211,6 +221,4 @@ class AliasStringGenerator
     {
         $this->sortOrder = $sortOrder;
     }
-
-
 }

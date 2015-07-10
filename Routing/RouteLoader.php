@@ -1,23 +1,21 @@
 <?php
 
 namespace Ibrows\SimpleSeoBundle\Routing;
+
 use Ibrows\SimpleSeoBundle\Model\ContentManagerInterface;
 use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Config\Loader\FileLoader;
-use Symfony\Component\Config\Resource\FileResource;
 
 class RouteLoader extends FileLoader
 {
-
     /**
      * @var ContentManagerInterface
      */
     protected $manager;
 
     /**
-     *
-     * @var  \Symfony\Component\Routing\RouterInterface
+     * @var \Symfony\Component\Routing\RouterInterface
      */
     protected $router;
 
@@ -25,7 +23,6 @@ class RouteLoader extends FileLoader
     const ROUTE_END = '_scms';
 
     private static $localizedAlias = true;
-
 
     public function __construct(ContentManagerInterface $manager, \Symfony\Component\Routing\RouterInterface $router)
     {
@@ -35,7 +32,8 @@ class RouteLoader extends FileLoader
 
     /**
      * @param string $resource
-     * @param null $type
+     * @param null   $type
+     *
      * @return bool
      */
     public function supports($resource, $type = null)
@@ -43,12 +41,14 @@ class RouteLoader extends FileLoader
         if ($type == 'ibrows_router') {
             return true;
         }
+
         return false;
     }
 
     /**
      * @param string $resource
-     * @param null $type
+     * @param null   $type
+     *
      * @return \Symfony\Component\Routing\RouteCollection
      */
     public function load($resource, $type = null)
@@ -56,47 +56,49 @@ class RouteLoader extends FileLoader
         $collection = new SymfonyRouteCollection();
         $results = $this->manager->findAllAlias();
         foreach ($results as $metatag) {
-            if(is_array($metatag['pathinfo'])){
+            if (is_array($metatag['pathinfo'])) {
                 $pathinfo = $metatag['pathinfo'];
-            }else{
+            } else {
                 $pathinfo = unserialize($metatag['pathinfo']);
             }
             $oldroute = $pathinfo['_route'];
-            if(!is_array($pathinfo) || !isset($pathinfo['_route']) || !isset($metatag['alias'])){
+            if (!is_array($pathinfo) || !isset($pathinfo['_route']) || !isset($metatag['alias'])) {
                 continue;
             }
 
             //add defaults to routealias
-            if(isset($pathinfo['__defaults']) && is_array($pathinfo['__defaults'])){
-                foreach($pathinfo['__defaults'] as $key => $value){
-                    if(strpos($key,'_')!==0){
-                        $metatag['alias'].='-{'.$key.'}';
+            if (isset($pathinfo['__defaults']) && is_array($pathinfo['__defaults'])) {
+                foreach ($pathinfo['__defaults'] as $key => $value) {
+                    if (strpos($key, '_') !== 0) {
+                        $metatag['alias'] .= '-{'.$key.'}';
                     }
                 }
             }
             $route = new Route($metatag['alias'], $pathinfo, array(), array());
             $collection->add(self::getRouteName($oldroute, $pathinfo), $route);
         }
+
         return $collection;
     }
 
     public static function getRouteName($routename, $parameters)
     {
-        $routename = self::ROUTE_BEGIN . $routename . self::ROUTE_END;
+        $routename = self::ROUTE_BEGIN.$routename.self::ROUTE_END;
         $routename .= self::parameters2String($parameters);
 
         return $routename;
     }
 
-    private static function parameters2String($parameters){
+    private static function parameters2String($parameters)
+    {
         ksort($parameters);
         $return = '';
         foreach ($parameters as $key => $value) {
-            if(is_array($value)){
+            if (is_array($value)) {
                 $return .= self::parameters2String($value);
                 continue;
             }
-            if($value === null){
+            if ($value === null) {
                 continue;
             }
             if (strpos($key, '_') !== 0 || ($key == '_locale' && self::$localizedAlias)) {
@@ -106,9 +108,9 @@ class RouteLoader extends FileLoader
                 $return .= "_{$key}_{$value}";
             }
         }
+
         return $return;
     }
-
 
     private static function escape($underlinedstring)
     {
@@ -116,6 +118,7 @@ class RouteLoader extends FileLoader
         $underlinedstring = str_replace('_', '.', $underlinedstring);
         $underlinedstring = str_replace('-', '..', $underlinedstring);
         $underlinedstring = str_replace('%', '...', $underlinedstring);
+
         return $underlinedstring;
     }
 
@@ -124,26 +127,27 @@ class RouteLoader extends FileLoader
         $string = str_replace('...', '%', $string);
         $string = str_replace('..', '-', $string);
         $string = str_replace('.', '_', $string);
+
         return $string;
     }
 
     public static function getPathinfo($newroutename)
     {
         $matches = array();
-        preg_match('!' . self::ROUTE_BEGIN . '(.*)' . self::ROUTE_END . '(.*)!', $newroutename, $matches);
+        preg_match('!'.self::ROUTE_BEGIN.'(.*)'.self::ROUTE_END.'(.*)!', $newroutename, $matches);
         $pathinfo = array();
         $pathinfo['_route'] = $matches[1];
         $matches = explode('_', $matches[2]);
 
         $key = false;
         foreach ($matches as $value) {
-            if ($value !== null && $value !== false ) {
+            if ($value !== null && $value !== false) {
                 if (!$key) {
                     $key = self::unescape($value);
                 } else {
-                    if($value === ''){
+                    if ($value === '') {
                         $pathinfo[$key] = null;
-                    }else{
+                    } else {
                         $pathinfo[$key] = self::unescape($value);
                     }
                     $key = false;
@@ -158,5 +162,4 @@ class RouteLoader extends FileLoader
     {
         self::$localizedAlias = $localizedAlias;
     }
-
 }

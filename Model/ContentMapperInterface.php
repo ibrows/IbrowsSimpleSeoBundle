@@ -4,7 +4,6 @@ namespace Ibrows\SimpleSeoBundle\Model;
 
 interface ContentMapperInterface extends AliasMapperInterface
 {
-
     /**
      * @return string
      */
@@ -22,6 +21,4 @@ interface ContentMapperInterface extends AliasMapperInterface
      */
     public function getDescription();
     public function setDescription($description);
-
-
 }

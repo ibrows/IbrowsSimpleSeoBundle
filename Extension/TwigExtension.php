@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
- * Class TwigExtension
+ * Class TwigExtension.
  */
 class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
 {
@@ -28,20 +28,17 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
     protected $env;
 
     /**
-     *
-     * @var  \Symfony\Component\Translation\TranslatorInterface
+     * @var \Symfony\Component\Translation\TranslatorInterface
      */
     protected $translator;
 
     /**
-     *
-     * @var  \Symfony\Component\Routing\RouterInterface
+     * @var \Symfony\Component\Routing\RouterInterface
      */
     protected $router;
 
     /**
-     *
-     * @var  \Symfony\Component\DependencyInjection\Container
+     * @var \Symfony\Component\DependencyInjection\Container
      */
     protected $container;
 
@@ -91,16 +88,15 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         return $this->container->get('request');
     }
 
-
     public function getFunctions()
     {
         return array(
-            'sseo_metatags'     => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
-            'sseo_metatag'      => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
-            'scms_metatags'     => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
-            'scms_metatag'      => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
+            'sseo_metatags' => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
+            'sseo_metatag' => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
+            'scms_metatags' => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
+            'scms_metatag' => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
             'scms_canonicaltag' => new \Twig_Function_Method($this, 'canonicalTagsHtml', array('is_safe' => array('html'))),
-            'scms_canonical'    => new \Twig_Function_Method($this, 'canonical'),
+            'scms_canonical' => new \Twig_Function_Method($this, 'canonical'),
         );
     }
 
@@ -116,17 +112,18 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
             //remove if rewrite not used
             $uri = str_replace('app_dev.php/', '', $uri);
             $uri = str_replace('app.php/', '', $uri);
+
             return $uri;
         }
-        try{
+        try {
             $infos = $this->router->match($pathinfo);
-        }catch (ResourceNotFoundException $e){
+        } catch (ResourceNotFoundException $e) {
             $infos = false;
-        }catch (MethodNotAllowedException $e){
+        } catch (MethodNotAllowedException $e) {
             $infos = false;
         }
         if ($infos === false) {
-            return null;
+            return;
         }
         if (strpos($infos['_route'], RouteLoader::ROUTE_BEGIN) === 0) {
             $infos = RouteLoader::getPathinfo($infos['_route']);
@@ -134,6 +131,7 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         $route = $infos['_route'];
         unset($infos['_route']);
         unset($infos['_controller']);
+
         return ($this->router->generate($route, $infos, true));
     }
 
@@ -144,9 +142,10 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
             return '';
         }
         if (strpos($uri, 'http://') === 0) {
-            $uri = 'https://' . substr($uri, 7);
+            $uri = 'https://'.substr($uri, 7);
         }
-        return '<link rel="canonical" href="' . $uri . '" >';
+
+        return '<link rel="canonical" href="'.$uri.'" >';
     }
 
     public function metaTag($tagName = 'title')
@@ -160,13 +159,12 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         if ($obj) {
             return $obj->getMetatag($tagName);
         }
-        return null;
-    }
 
+        return;
+    }
 
     public function metaTagsHtml($defaults = true, array $arguments = array(), $canonical = true)
     {
-
         $locale = $this->translator->getLocale();
         $currentLang = substr($locale, 0, 2);
         if (!isset($arguments['pre'])) {
@@ -174,22 +172,23 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         }
         $headers = self::initMetaTagString();
         if ($defaults) {
-            $headers .= $arguments['pre'] . '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
-            $headers .= $arguments['pre'] . '<meta http-equiv="content-language" content="' . $currentLang . '" />';
-            $headers .= $arguments['pre'] . '<meta name="DC.language" scheme="RFC3066" content="' . $currentLang . '" />';
+            $headers .= $arguments['pre'].'<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+            $headers .= $arguments['pre'].'<meta http-equiv="content-language" content="'.$currentLang.'" />';
+            $headers .= $arguments['pre'].'<meta name="DC.language" scheme="RFC3066" content="'.$currentLang.'" />';
         }
         $key = $this->keyGenerator->generateMetaTagKey($this->container->get('request'), $this->container->get('router'), $locale);
         $obj = $this->manager->findMetaTag($key, $locale);
         if ($obj) {
             $headers .= $this->metaTagToHtml($obj, $arguments);
-        }else{
+        } else {
             $tags = $arguments;
             unset($tags['pre']);
-            $headers .=  MetaTagToHtmlRenderer::createMetaTags($arguments['pre'],$tags, $this);
+            $headers .=  MetaTagToHtmlRenderer::createMetaTags($arguments['pre'], $tags, $this);
         }
         if ($canonical) {
-            $headers .=  $arguments['pre'] . $this->canonicalTagsHtml($this->getRequest()->getPathInfo());
+            $headers .=  $arguments['pre'].$this->canonicalTagsHtml($this->getRequest()->getPathInfo());
         }
+
         return $headers;
     }
 
@@ -201,13 +200,13 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
             throw new \Exception("RenderService($serviceId) must implements HtmlRendererInterface");
         }
         $renderer->setFilter($this);
+
         return $renderer->toHTML($content, $arguments);
     }
 
-
     public static function initMetaTagString()
     {
-        return "<!--scms-metatags-->";
+        return '<!--scms-metatags-->';
     }
 
     public function filterHtml($string)

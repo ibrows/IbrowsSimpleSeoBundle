@@ -51,24 +51,23 @@ interface ContentInterface
 //    public function setParameters(\Symfony\Component\DependencyInjection\ContainerInterface $params);
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
 //    public function getId();
 
     /**
-     * Set keyword
+     * Set keyword.
      *
      * @param string $keyword
      */
     public function setKeyword($keyword);
 
-    /**
+    /*
      * Get keyword
      *
      * @return string
      */
 //    public function getKeyword();
-
 }

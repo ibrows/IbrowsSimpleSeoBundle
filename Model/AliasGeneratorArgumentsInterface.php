@@ -2,9 +2,8 @@
 
 namespace Ibrows\SimpleSeoBundle\Model;
 
-
 /**
- * Interface AliasGeneratorArgumentsInterface
+ * Interface AliasGeneratorArgumentsInterface.
  */
 interface AliasGeneratorArgumentsInterface
 {
@@ -12,6 +11,4 @@ interface AliasGeneratorArgumentsInterface
      * @return array
      */
     public function getAliasArguments();
-
-
 }

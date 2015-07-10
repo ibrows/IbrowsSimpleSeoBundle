@@ -2,14 +2,13 @@
 
 namespace Ibrows\SimpleSeoBundle\Form;
 
-
 use Ibrows\SimpleSeoBundle\Model\AliasGeneratorArgumentsInterface;
 use Ibrows\SimpleSeoBundle\Model\AliasMapperInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * Map a form to an AliasMapper
+ * Map a form to an AliasMapper.
  */
 class AliasFormMapper implements AliasMapperInterface, AliasGeneratorArgumentsInterface
 {
@@ -43,8 +42,8 @@ class AliasFormMapper implements AliasMapperInterface, AliasGeneratorArgumentsIn
     /**
      * @param FormInterface $form
      * @param $frontendViewRouteName
-     * @param array $frontendViewParameters
-     * @param null $frontendViewRouteLocale
+     * @param array  $frontendViewParameters
+     * @param null   $frontendViewRouteLocale
      * @param string $aliasProperty
      */
     public function __construct(FormInterface $form, $frontendViewRouteName, array $frontendViewParameters = array(), $frontendViewRouteLocale = null, $aliasProperty = 'alias')
@@ -55,7 +54,6 @@ class AliasFormMapper implements AliasMapperInterface, AliasGeneratorArgumentsIn
         $this->frontendViewRouteLocale = $frontendViewRouteLocale;
         $this->aliasProperty = $aliasProperty;
     }
-
 
     /**
      * @return string
@@ -110,7 +108,7 @@ class AliasFormMapper implements AliasMapperInterface, AliasGeneratorArgumentsIn
     }
 
     /**
-     * @param string $key
+     * @param string          $key
      * @param null|int|string $value
      */
     public function setFrontendViewParameter($key, $value)
@@ -120,6 +118,7 @@ class AliasFormMapper implements AliasMapperInterface, AliasGeneratorArgumentsIn
 
     /**
      * @param string $key
+     *
      * @return bool
      */
     public function hasFrontendViewParameter($key)
@@ -128,8 +127,9 @@ class AliasFormMapper implements AliasMapperInterface, AliasGeneratorArgumentsIn
     }
 
     /**
-     * @param string $key
+     * @param string          $key
      * @param null|int|string $default
+     *
      * @return null|int|string
      */
     public function getFrontendViewParameter($key, $default = null)
@@ -152,7 +152,6 @@ class AliasFormMapper implements AliasMapperInterface, AliasGeneratorArgumentsIn
     {
         $this->frontendViewRouteLocale = $frontendViewRouteLocale;
     }
-
 
     /**
      * @param string $message
@@ -183,15 +182,14 @@ class AliasFormMapper implements AliasMapperInterface, AliasGeneratorArgumentsIn
      */
     public function getAliasArguments()
     {
-        if(!$this->aliasGeneratorArgumentProperties){
-            return null;
+        if (!$this->aliasGeneratorArgumentProperties) {
+            return;
         }
         $args = array();
-        foreach($this->aliasGeneratorArgumentProperties as $property){
-            $args[] = (string)$this->form->get($property)->getData();
+        foreach ($this->aliasGeneratorArgumentProperties as $property) {
+            $args[] = (string) $this->form->get($property)->getData();
         }
+
         return $args;
     }
-
-
 }

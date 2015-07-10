@@ -2,9 +2,8 @@
 
 namespace Ibrows\SimpleSeoBundle\Model;
 
-
 /**
- * Interface ContentManagerInterface
+ * Interface ContentManagerInterface.
  */
 interface ContentManagerInterface extends AliasExistsInterface
 {
@@ -16,6 +15,7 @@ interface ContentManagerInterface extends AliasExistsInterface
     /**
      * @param $key
      * @param $locale
+     *
      * @return ContentInterface
      */
     public function findMetaTag($key, $locale);

@@ -9,7 +9,6 @@ use Symfony\Component\Routing\RouterInterface;
 
 class ContentManager implements ContentManagerInterface
 {
-
     /**
      * @var EntityManager
      */
@@ -35,19 +34,19 @@ class ContentManager implements ContentManagerInterface
      */
     protected $router;
 
-
     /**
-     * @param EntityManager $em
-     * @param string $entityClass
-     * @param KeyGenerator $generator
-     * @param RouterInterface $router
+     * @param EntityManager        $em
+     * @param string               $entityClass
+     * @param KeyGenerator         $generator
+     * @param RouterInterface      $router
      * @param AliasStringGenerator $stringGenerator
+     *
      * @throws \Exception
      */
     public function __construct(EntityManager $em, $entityClass, KeyGenerator $generator, RouterInterface $router, AliasStringGenerator $stringGenerator)
     {
         $this->em = $em;
-        if(!$this->implementsContentInterface($entityClass)){
+        if (!$this->implementsContentInterface($entityClass)) {
             throw new \Exception("The Entity Class '$entityClass' must implement the 'ContentInterface'");
         }
         $this->entityClass = $entityClass;
@@ -58,14 +57,16 @@ class ContentManager implements ContentManagerInterface
 
     /**
      * @param $className
+     *
      * @return bool
      */
     protected function implementsContentInterface($className)
     {
         $rc = new \ReflectionClass($className);
-        if($rc->implementsInterface('Ibrows\SimpleSeoBundle\Model\ContentInterface')){
+        if ($rc->implementsInterface('Ibrows\SimpleSeoBundle\Model\ContentInterface')) {
             return true;
         }
+
         return false;
     }
 
@@ -73,18 +74,20 @@ class ContentManager implements ContentManagerInterface
      * @param $alias
      * @param $path
      * @param array $pathParameters
-     * @param null $locale
-     * @param null $title
-     * @param null $keywords
-     * @param null $description
+     * @param null  $locale
+     * @param null  $title
+     * @param null  $keywords
+     * @param null  $description
+     *
      * @return ContentInterface
+     *
      * @internal param array $metatags
      */
     public function createNewAlias($alias, $path, array $pathParameters = array(), $locale = null, $title = null, $keywords = null, $description = null)
     {
         $rc = new \ReflectionClass($this->entityClass);
         $object = $rc->newInstance();
-        if(!$object instanceof ContentInterface){
+        if (!$object instanceof ContentInterface) {
             return;
         }
         $object->setAlias($alias);
@@ -101,30 +104,37 @@ class ContentManager implements ContentManagerInterface
     }
 
     /**
-     * gets back a currently non-existing generated alias, from the given arguments
+     * gets back a currently non-existing generated alias, from the given arguments.
+     *
      * @param array $arguments
+     *
      * @return string
      */
-    public function createAliasString( array $arguments){
-        return $this->aliasStringGenerator->generateAliasString($arguments,$this);
+    public function createAliasString(array $arguments)
+    {
+        return $this->aliasStringGenerator->generateAliasString($arguments, $this);
     }
 
-
     /**
-     *  gets back a currently non-existing generated alias, from the given object
+     *  gets back a currently non-existing generated alias, from the given object.
+     *
      * @param AliasGeneratorArgumentsInterface $aliasGeneratorArguments
+     *
      * @return string
      */
-    public function createAliasStringFromObject(AliasGeneratorArgumentsInterface $aliasGeneratorArguments){
+    public function createAliasStringFromObject(AliasGeneratorArgumentsInterface $aliasGeneratorArguments)
+    {
         return $this->createAliasString($aliasGeneratorArguments->getAliasArguments());
     }
 
     /**
-     * Returns true if there is already an alias of another path+pathParameters+locale
+     * Returns true if there is already an alias of another path+pathParameters+locale.
+     *
      * @param       $alias
      * @param       $path
      * @param array $pathParameters
      * @param null  $locale
+     *
      * @return ContentInterface
      */
     public function checkIsAliasExistsAlready($alias, $path, array $pathParameters = array(), $locale = null)
@@ -149,11 +159,12 @@ class ContentManager implements ContentManagerInterface
      * @param $alias
      * @param $path
      * @param array $pathParameters
-     * @param null $locale
-     * @param bool $flush
-     * @param null $title
-     * @param null $keywords
-     * @param null $description
+     * @param null  $locale
+     * @param bool  $flush
+     * @param null  $title
+     * @param null  $keywords
+     * @param null  $description
+     *
      * @return ContentInterface
      */
     public function addOrUpdateAlias($alias, $path, array $pathParameters = array(), $locale = null, $flush = true, $title = null, $keywords = null, $description = null)
@@ -191,7 +202,7 @@ class ContentManager implements ContentManagerInterface
     }
 
     /**
-     * @param  AliasMapperInterface $object
+     * @param AliasMapperInterface $object
      */
     public function checkAlias(AliasMapperInterface $object)
     {
@@ -242,7 +253,6 @@ class ContentManager implements ContentManagerInterface
         $this->entityClass = $entityClass;
     }
 
-
     /**
      * @return \Doctrine\ORM\EntityRepository
      */
@@ -253,6 +263,7 @@ class ContentManager implements ContentManagerInterface
 
     /**
      * @param $alias
+     *
      * @return null|object
      */
     public function findByAlias($alias)
@@ -261,7 +272,7 @@ class ContentManager implements ContentManagerInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function aliasExists($alias)
     {
@@ -283,14 +294,14 @@ class ContentManager implements ContentManagerInterface
         try {
             return $qb->getQuery()->getResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
         } catch (\Doctrine\ORM\NoResultException $e) {
-            return null;
+            return;
         }
     }
-
 
     /**
      * @param $key
      * @param $locale
+     *
      * @return ContentInterface
      */
     public function findMetaTag($key, $locale = null)

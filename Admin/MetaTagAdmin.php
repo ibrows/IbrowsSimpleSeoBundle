@@ -14,8 +14,7 @@ use Sonata\AdminBundle\Route\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class MetaTagAdmin
- * @package Ibrows\SimpleSeoBundle\Admin
+ * Class MetaTagAdmin.
  */
 class MetaTagAdmin extends Admin
 {
@@ -74,13 +73,14 @@ class MetaTagAdmin extends Admin
 
     /**
      * @param ContentInterface $content
-     * @param bool $originUrl
+     * @param bool             $originUrl
+     *
      * @return string
      */
     public function getUrl(ContentInterface $content, $originUrl = true)
     {
         if (!$info = $content->getPathInfo()) {
-            return null;
+            return;
         }
         $router = $this->getRouter();
 
@@ -95,6 +95,7 @@ class MetaTagAdmin extends Admin
             if ($originUrl) {
                 $parameters[UrlGenerator::GENERATE_NORMAL_ROUTE] = true;
             }
+
             return $router->generate($info['_route'], $parameters);
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -102,7 +103,7 @@ class MetaTagAdmin extends Admin
     }
 
     /**
-     * (non-PHPdoc)
+     * (non-PHPdoc).
      *
      * @see \Sonata\AdminBundle\Admin\Admin::configureRoutes()
      */
@@ -115,58 +116,57 @@ class MetaTagAdmin extends Admin
     }
 
     /**
-     * (non-PHPdoc)
+     * (non-PHPdoc).
      *
      * @see \Sonata\AdminBundle\Admin\Admin::prePersist()
      */
     public function prePersist($object)
     {
-        /** @var $object MetaTagContent */
+        /* @var $object MetaTagContent */
         $path = $this->getForm()->get('path')->getData();
         if (strpos('/', $path) !== false) {
-            $path = '/' . $path;
+            $path = '/'.$path;
         }
         try {
             $key = $this->keyGenerator->generateMetaTagKeyFromRelativePath($path, $this->getRouter(), $this->translator->getLocale());
             $object->setKeyword($key);
         } catch (\Exception $e) {
         }
-
     }
 
     /**
-     * (non-PHPdoc)
+     * (non-PHPdoc).
      *
      * @see \Sonata\AdminBundle\Admin\Admin::configureListFields()
      */
     protected function configureListFields(ListMapper $list)
     {
         $list->addIdentifier(
-            "id",
+            'id',
             'integer',
             array(
                 'route' => array(
-                    'name' => 'edit'
-                )
+                    'name' => 'edit',
+                ),
             )
         );
-        $list->add("alias");
-        $list->add("originUrl", 'text', array('mapped' => false, 'template' => $this->getUriTemplate(), 'originUrl' => true));
-        $list->add("url", 'text', array('mapped' => false, 'template' => $this->getUriTemplate(), 'originUrl' => false));
+        $list->add('alias');
+        $list->add('originUrl', 'text', array('mapped' => false, 'template' => $this->getUriTemplate(), 'originUrl' => true));
+        $list->add('url', 'text', array('mapped' => false, 'template' => $this->getUriTemplate(), 'originUrl' => false));
     }
 
     /**
-     * (non-PHPdoc)
+     * (non-PHPdoc).
      *
      * @see \Sonata\AdminBundle\Admin\Admin::configureDatagridFilters()
      */
     protected function configureDatagridFilters(DatagridMapper $filter)
     {
-        $filter->add("alias");
+        $filter->add('alias');
     }
 
     /**
-     * (non-PHPdoc)
+     * (non-PHPdoc).
      *
      * @see \Sonata\AdminBundle\Admin\Admin::configureFormFields()
      */
@@ -190,4 +190,4 @@ class MetaTagAdmin extends Admin
     {
         return $this->getConfigurationPool()->getContainer()->get('router');
     }
-} 
+}

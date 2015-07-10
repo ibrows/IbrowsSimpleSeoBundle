@@ -4,7 +4,6 @@ namespace Ibrows\SimpleSeoBundle\Model;
 
 interface AliasMapperInterface
 {
-
     /**
      * @return string
      */
@@ -22,13 +21,15 @@ interface AliasMapperInterface
 
     /**
      * @param string $key
+     *
      * @return bool
      */
     public function hasFrontendViewParameter($key);
 
     /**
-     * @param string $key
+     * @param string          $key
      * @param null|int|string $default
+     *
      * @return null|int|string
      */
     public function getFrontendViewParameter($key, $default = null);
@@ -47,5 +48,4 @@ interface AliasMapperInterface
      * @param string $alias
      */
     public function setAlias($alias);
-
 }

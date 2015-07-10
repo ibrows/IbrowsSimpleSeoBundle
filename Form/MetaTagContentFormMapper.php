@@ -2,12 +2,10 @@
 
 namespace Ibrows\SimpleSeoBundle\Form;
 
-use Ibrows\SimpleSeoBundle\Form\AliasFormMapper;
 use Ibrows\SimpleSeoBundle\Model\ContentMapperInterface;
 
 class MetaTagContentFormMapper extends AliasFormMapper implements ContentMapperInterface
 {
-
     /**
      * @var string
      */
@@ -85,5 +83,4 @@ class MetaTagContentFormMapper extends AliasFormMapper implements ContentMapperI
     {
         return $this->form->get($this->descriptionProperty);
     }
-
 }

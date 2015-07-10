@@ -1,13 +1,13 @@
 <?php
+
 /**
  * Created by iBROWS AG.
  * User: marcsteiner
  * Date: 02.12.14
- * Time: 10:33
+ * Time: 10:33.
  */
 
 namespace Ibrows\SimpleSeoBundle\Routing;
-
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -16,7 +16,6 @@ use Symfony\Component\Routing\RouterInterface;
 
 class KeyGenerator
 {
-
     const LOCALE_DELIMITER = '---';
     protected $addQueryString = false;
 
@@ -28,9 +27,8 @@ class KeyGenerator
         $this->addQueryString = $addQueryString;
     }
 
-
     /**
-     * @return boolean
+     * @return bool
      */
     public function isAddQueryString()
     {
@@ -38,43 +36,43 @@ class KeyGenerator
     }
 
     /**
-     * @param boolean $addQueryString
+     * @param bool $addQueryString
      */
     public function setAddQueryString($addQueryString)
     {
         $this->addQueryString = $addQueryString;
     }
 
-
     public function generatePathInfoFromMetaTagKey($key)
     {
         $arr = $this->splitLocaledKeyword($key);
         $key = str_replace('_', '/', $arr[1]);
         $key = str_replace('-00-', '_', $key);
+
         return $key;
     }
 
     public function generateMetaTagKeyFromPathInfo($pathinfo, $locale)
     {
-
         $key = str_replace('_', '-00-', $pathinfo); // replace / replacement
         $key = str_replace('/', '_', $key); //replace /
         $key = $this->generateLocaledKeyword($key, $locale);
+
         return $key;
     }
-
 
     public function generateMetaTagKey(Request $request, RouterInterface $router, $locale)
     {
         $pathInfo = $request->getPathInfo();
-        $key = $this->generateMetaTagKeyFromRelativePath($pathInfo,$router,$locale);
+        $key = $this->generateMetaTagKeyFromRelativePath($pathInfo, $router, $locale);
         if ($this->addQueryString) {
-            $key .= '?' . $request->getQueryString();
+            $key .= '?'.$request->getQueryString();
         }
+
         return $key;
     }
 
-    public function generateMetaTagKeyFromRelativePath ($pathInfo, RouterInterface $router, $locale)
+    public function generateMetaTagKeyFromRelativePath($pathInfo, RouterInterface $router, $locale)
     {
         try {
             $info = $router->match($pathInfo);
@@ -94,6 +92,7 @@ class KeyGenerator
             $pathInfo = str_replace('/app_dev.php', '', $pathInfo);
             $pathInfo = preg_replace('!([^?]*)(\?_locale=[^&]*)!', '$1', $pathInfo);
         }
+
         return $this->generateMetaTagKeyFromPathInfo($pathInfo, $locale);
     }
 
@@ -101,18 +100,18 @@ class KeyGenerator
     {
         $pos = stripos($key, self::LOCALE_DELIMITER);
         if ($pos === false && $locale != null) {
-            $key = $locale . self::LOCALE_DELIMITER . $key;
+            $key = $locale.self::LOCALE_DELIMITER.$key;
         } else {
             $pos = strlen(self::LOCALE_DELIMITER) + $pos;
             if ($locale == null) {
                 // do nothing
             } else {
-                $key = $locale . self::LOCALE_DELIMITER . substr($key, $pos);
+                $key = $locale.self::LOCALE_DELIMITER.substr($key, $pos);
             }
         }
+
         return $key;
     }
-
 
     public function splitLocaledKeyword($key)
     {
@@ -120,6 +119,7 @@ class KeyGenerator
         if (sizeof($arr) == 1) {
             return array(null, $arr[0]);
         }
+
         return $arr;
     }
-} 
+}

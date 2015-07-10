@@ -4,10 +4,8 @@ namespace Ibrows\SimpleSeoBundle\Renderer;
 
 use Ibrows\SimpleSeoBundle\Model\ContentInterface;
 
-
 class MetaTagToHtmlRenderer implements HtmlRendererInterface
 {
-
     /**
      * @var HtmlFilterInterface
      */
@@ -21,10 +19,10 @@ class MetaTagToHtmlRenderer implements HtmlRendererInterface
         $this->filter = $filter;
     }
 
-
     /**
      * @param ContentInterface $content
      * @param array            $args
+     *
      * @return string
      */
     public function toHTML(ContentInterface $content, array $args)
@@ -40,6 +38,7 @@ class MetaTagToHtmlRenderer implements HtmlRendererInterface
             $pre = $tags['pre'];
             unset($tags['pre']);
         }
+
         return self::createMetaTags($pre, $tags, $this->filter);
     }
 
@@ -52,11 +51,12 @@ class MetaTagToHtmlRenderer implements HtmlRendererInterface
                 $key = $filter->filterHtml($key);
             }
             if ($key == 'title') {
-                $output .= $pre . "<title>" . $tag . "</title>";
+                $output .= $pre.'<title>'.$tag.'</title>';
                 continue;
             }
-            $output .= $pre . self::createMetaTag($key, $tag);
+            $output .= $pre.self::createMetaTag($key, $tag);
         }
+
         return $output;
     }
 
@@ -64,17 +64,18 @@ class MetaTagToHtmlRenderer implements HtmlRendererInterface
      * @param string $name
      * @param string $content
      * @param array  $extras
+     *
      * @return string
      */
     public static function createMetaTag($name, $content, $extras = array())
     {
         $metaString = '';
-        $metaString .= '<meta name="' . $name . '"';
+        $metaString .= '<meta name="'.$name.'"';
         foreach ($extras as $key => $extra) {
             $metaString .= " $key=\"$extra\"";
         }
-        $metaString .= ' content="' . $content . '" />';
+        $metaString .= ' content="'.$content.'" />';
+
         return $metaString;
     }
-
 }

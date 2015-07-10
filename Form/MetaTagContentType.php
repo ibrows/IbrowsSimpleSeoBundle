@@ -3,19 +3,16 @@
 namespace Ibrows\SimpleSeoBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
-
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
 
 class MetaTagContentType extends AbstractType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $data = $options['data'];
-        if($data && $data->getKeyword()){
-            $builder->add('keyword','hidden');
-        }else{
+        if ($data && $data->getKeyword()) {
+            $builder->add('keyword', 'hidden');
+        } else {
             $builder->add('keyword');
         }
         $builder
@@ -32,6 +29,4 @@ class MetaTagContentType extends AbstractType
     {
         return 'ibrows_simpleseobundle_metatagcontenttype';
     }
-
 }
-
