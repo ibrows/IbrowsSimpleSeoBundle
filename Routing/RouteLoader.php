@@ -54,17 +54,21 @@ class RouteLoader extends FileLoader
     public function load($resource, $type = null)
     {
         $collection = new SymfonyRouteCollection();
-        $results = $this->manager->findAllAlias();
+        try{
+            $results = $this->manager->findAllAlias();
+        }catch (\Exception $e){
+            return $collection;
+        }
         foreach ($results as $metatag) {
             if (is_array($metatag['pathinfo'])) {
                 $pathinfo = $metatag['pathinfo'];
             } else {
-                $pathinfo = unserialize($metatag['pathinfo']);
+                $pathinfo = @unserialize($metatag['pathinfo']);
             }
-            $oldroute = $pathinfo['_route'];
             if (!is_array($pathinfo) || !isset($pathinfo['_route']) || !isset($metatag['alias'])) {
                 continue;
             }
+            $oldroute = $pathinfo['_route'];
 
             //add defaults to routealias
             if (isset($pathinfo['__defaults']) && is_array($pathinfo['__defaults'])) {
