@@ -91,12 +91,12 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
     public function getFunctions()
     {
         return array(
-            'sseo_metatags' => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
-            'sseo_metatag' => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
-            'scms_metatags' => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
-            'scms_metatag' => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
+            'sseo_metatags'     => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
+            'sseo_metatag'      => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
+            'scms_metatags'     => new \Twig_Function_Method($this, 'metaTagsHtml', array('is_safe' => array('html'))),
+            'scms_metatag'      => new \Twig_Function_Method($this, 'metaTag', array('is_safe' => array('html'))),
             'scms_canonicaltag' => new \Twig_Function_Method($this, 'canonicalTagsHtml', array('is_safe' => array('html'))),
-            'scms_canonical' => new \Twig_Function_Method($this, 'canonical'),
+            'scms_canonical'    => new \Twig_Function_Method($this, 'canonical'),
         );
     }
 
@@ -142,19 +142,22 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
             return '';
         }
         if (strpos($uri, 'http://') === 0) {
-            $uri = 'https://'.substr($uri, 7);
+            $uri = 'https://' . substr($uri, 7);
         }
 
-        return '<link rel="canonical" href="'.$uri.'" >';
+        return '<link rel="canonical" href="' . $uri . '" >';
     }
 
-    public function metaTag($tagName = 'title')
+    public function metaTag($tagName = 'title', $locale = 'default')
     {
-        $locale = $this->translator->getLocale();
+        if ($locale == 'default') {
+            $locale = $this->translator->getLocale();
+        }
         if (!isset($arguments['pre'])) {
             $arguments['pre'] = sprintf("\n%8s", ' ');
         }
         $key = $this->keyGenerator->generateMetaTagKey($this->getRequest(), $this->router, $locale);
+
         $obj = $this->manager->findMetaTag($key, $locale);
         if ($obj) {
             return $obj->getMetatag($tagName);
@@ -172,9 +175,9 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         }
         $headers = self::initMetaTagString();
         if ($defaults) {
-            $headers .= $arguments['pre'].'<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
-            $headers .= $arguments['pre'].'<meta http-equiv="content-language" content="'.$currentLang.'" />';
-            $headers .= $arguments['pre'].'<meta name="DC.language" scheme="RFC3066" content="'.$currentLang.'" />';
+            $headers .= $arguments['pre'] . '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+            $headers .= $arguments['pre'] . '<meta http-equiv="content-language" content="' . $currentLang . '" />';
+            $headers .= $arguments['pre'] . '<meta name="DC.language" scheme="RFC3066" content="' . $currentLang . '" />';
         }
         $key = $this->keyGenerator->generateMetaTagKey($this->container->get('request'), $this->container->get('router'), $locale);
         $obj = $this->manager->findMetaTag($key, $locale);
@@ -183,10 +186,10 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
         } else {
             $tags = $arguments;
             unset($tags['pre']);
-            $headers .=  MetaTagToHtmlRenderer::createMetaTags($arguments['pre'], $tags, $this);
+            $headers .= MetaTagToHtmlRenderer::createMetaTags($arguments['pre'], $tags, $this);
         }
         if ($canonical) {
-            $headers .=  $arguments['pre'].$this->canonicalTagsHtml($this->getRequest()->getPathInfo());
+            $headers .= $arguments['pre'] . $this->canonicalTagsHtml($this->getRequest()->getPathInfo());
         }
 
         return $headers;
