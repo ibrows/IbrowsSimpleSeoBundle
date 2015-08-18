@@ -24,6 +24,12 @@ class RouteLoader extends FileLoader
 
     private static $localizedAlias = true;
 
+    private static $routerParameterBlacklist = array(
+        '_controller',
+        '_format',
+        '_route'
+    );
+
     public function __construct(ContentManagerInterface $manager, \Symfony\Component\Routing\RouterInterface $router)
     {
         $this->manager = $manager;
@@ -85,6 +91,11 @@ class RouteLoader extends FileLoader
         return $collection;
     }
 
+    private static function isValidParameterName($name)
+    {
+        return !in_array($name, self::$routerParameterBlacklist) || ($name == '_locale' && self::$localizedAlias);
+    }
+
     public static function getRouteName($routename, $parameters)
     {
         $routename = self::ROUTE_BEGIN.$routename.self::ROUTE_END;
@@ -105,7 +116,7 @@ class RouteLoader extends FileLoader
             if ($value === null) {
                 continue;
             }
-            if (strpos($key, '_') !== 0 || ($key == '_locale' && self::$localizedAlias)) {
+            if (self::isValidParameterName($key)) {
                 //escape '_'
                 $key = self::escape($key);
                 $value = self::escape($value);
