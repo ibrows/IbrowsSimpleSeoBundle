@@ -93,7 +93,7 @@ class RouteLoader extends FileLoader
 
     private static function isValidParameterName($name)
     {
-        return !in_array($name, self::$routerParameterBlacklist) || ($name == '_locale' && self::$localizedAlias);
+        return !in_array($name, self::$routerParameterBlacklist );
     }
 
     public static function getRouteName($routename, $parameters)
@@ -114,6 +114,9 @@ class RouteLoader extends FileLoader
                 continue;
             }
             if ($value === null) {
+                continue;
+            }
+            if (!is_scalar($value)) {
                 continue;
             }
             if (self::isValidParameterName($key)) {
