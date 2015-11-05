@@ -11,7 +11,7 @@ Install & setup the bundle
 
 
     ``` bash
-    $ php composer.phar require ibrows/simple-seo-bundle "~2.0@dev"
+    $ php composer.phar require ibrows/simple-seo-bundle 
     ```
 	
 	Composer will install the bundle to your project's `ibrows/simple-seo-bundle` directory.
@@ -66,6 +66,20 @@ Additional configuration
 ### Edit default config
     # app/config/conf.yml
 
-        ibrows_simple_seo:
+    ``` yaml
+    
+	ibrows_simple_seo:
+	    entity_class: Ibrows\SimpleSeoBundle\Entity\MetaTagContent
+	    localized_alias: true
+	    add_query_string: false
+	    admin:
+	        allow_create: true
+	    alias:
+	        maxLength: 100
+	        separatorUnique: '-'
+	        separator: /
+	        notAllowedCharsPattern: '![^-a-z0-9_\/]+!'
+	        sortOrder: {  }
 
-
+    ```
+    
