@@ -64,10 +64,7 @@ Additional configuration
 ------------------------
 
 ### Edit default config
-    # app/config/conf.yml
 
-    ``` yaml
-    
 	ibrows_simple_seo:
 	    entity_class: Ibrows\SimpleSeoBundle\Entity\MetaTagContent
 	    localized_alias: true
@@ -81,5 +78,4 @@ Additional configuration
 	        notAllowedCharsPattern: '![^-a-z0-9_\/]+!'
 	        sortOrder: {  }
 
-    ```
     
