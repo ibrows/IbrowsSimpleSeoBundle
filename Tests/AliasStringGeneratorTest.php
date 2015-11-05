@@ -119,4 +119,28 @@ class AliasStringGeneratorTest extends \PHPUnit_Framework_TestCase
         $generator->setSortOrder(array('a', 'c', 'd'));
         $this->assertEquals('a/c/d/b', $generator->generateAliasString($input));
     }
+
+
+    public function provideGenerateWithNotAllowedCharsPattern()
+    {
+        return array(
+            array('blahh_foo', '![^-a-z0-9_]+!' ,array('BlaH/h', 'Foo')),
+            array('blah/h_foo','![^-a-z0-9_/]+!' ,array('BlaH/h', 'Foo')),
+            array('blh/h_foo','![a]+!' ,array('BlaH/h', 'Foo')),
+        );
+    }
+
+    /**
+     * @dataProvider provideGenerateWithNotAllowedCharsPattern
+     *
+     * @param $expected
+     * @param $input
+     */
+    public function testGenerateWithNotAllowedCharsPattern($expected,$pattern, array $input)
+    {
+        $generator = new AliasStringGenerator();
+        $generator->setSeparator('_');
+        $generator->setNotAllowedCharsPattern($pattern);
+        $this->assertEquals($expected,  $generator->generateAliasString($input));
+    }
 }

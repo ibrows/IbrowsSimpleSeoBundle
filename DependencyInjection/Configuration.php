@@ -36,6 +36,13 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('allow_create')->defaultTrue()->end()
                     ->end()
                 ->end()
+                ->arrayNode('alias')->addDefaultsIfNotSet()->children()
+                    ->scalarNode('maxLength')->defaultValue(100)->end()
+                    ->scalarNode('separatorUnique')->defaultValue('-')->end()
+                    ->scalarNode('separator')->defaultValue('/')->end()
+                    ->scalarNode('notAllowedCharsPattern')->defaultValue('![^-a-z0-9_]+!')->end()
+                    ->arrayNode('sortOrder')->defaultValue(array())->prototype('scalar')->end()
+                ->end()->end()
             ->end();
     }
 }

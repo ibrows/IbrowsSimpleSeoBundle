@@ -11,6 +11,10 @@ namespace Ibrows\SimpleSeoBundle\Model;
 /**
  * Class AliasStringGenerator.
  */
+/**
+ * Class AliasStringGenerator
+ * @package Ibrows\SimpleSeoBundle\Model
+ */
 class AliasStringGenerator
 {
     /**
@@ -31,6 +35,11 @@ class AliasStringGenerator
     protected $separator = '/';
 
     /**
+     * @var string
+     */
+    protected $notAllowedCharsPattern = '![^-a-z0-9_]+!';
+
+    /**
      * @param array                $arguments
      * @param AliasExistsInterface $aliasExists
      *
@@ -48,6 +57,11 @@ class AliasStringGenerator
         return $alias;
     }
 
+    /**
+     * @param $a
+     * @param $b
+     * @return int
+     */
     protected function sort($a, $b)
     {
         $resulta = array_search($a, $this->sortOrder);
@@ -113,7 +127,7 @@ class AliasStringGenerator
         $string = trim($string);
         $string = $this->translit($string);
         $string = strtolower($string);
-        $string = preg_replace('![^-a-z0-9_]+!', '', $string);
+        $string = preg_replace($this->getNotAllowedCharsPattern(), '', $string);
 
         return $string;
     }
@@ -221,4 +235,22 @@ class AliasStringGenerator
     {
         $this->sortOrder = $sortOrder;
     }
+
+    /**
+     * @return string
+     */
+    public function getNotAllowedCharsPattern()
+    {
+        return $this->notAllowedCharsPattern;
+    }
+
+    /**
+     * @param string $notAllowedCharsPattern
+     */
+    public function setNotAllowedCharsPattern($notAllowedCharsPattern)
+    {
+        $this->notAllowedCharsPattern = $notAllowedCharsPattern;
+    }
+
+
 }

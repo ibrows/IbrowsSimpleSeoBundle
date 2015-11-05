@@ -19,7 +19,13 @@
 
         <service id="ibrows_simple_seo.meta_tag_renderer" class="%ibrows_simple_seo.meta_tag_renderer.class%"/>
 
-        <service  id="ibrows_simple_seo.aliasstringgenerator" class="%ibrows_simple_seo.aliasstringgenerator.class%"/>
+        <service id="ibrows_simple_seo.aliasstringgenerator" class="%ibrows_simple_seo.aliasstringgenerator.class%">
+            <call method="setMaxLength"><argument type="string">%ibrows_simple_seo.alias.maxLength%</argument></call>
+            <call method="setNotAllowedCharsPattern"><argument type="string">%ibrows_simple_seo.alias.NotAllowedCharsPattern%</argument></call>
+            <call method="setSeparator"><argument type="string">%ibrows_simple_seo.alias.separator%</argument></call>
+            <call method="setSeparatorUnique"><argument type="string">%ibrows_simple_seo.alias.separatorUnique%</argument></call>
+            <call method="setSortOrder"><argument type="collection">%ibrows_simple_seo.alias.sortOrder%</argument></call>
+        </service>
 
         <service id="ibrows_simple_seo.content_manager" class="%ibrows_simple_seo.content_manager.class%">
             <argument type="service" id="ibrows_simple_seo.entity_manager"/>
