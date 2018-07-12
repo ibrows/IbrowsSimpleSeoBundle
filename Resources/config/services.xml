@@ -14,7 +14,9 @@
     </parameters>
     <services>
 
-        <service id="ibrows_simple_seo.entity_manager" factory-service="doctrine" factory-method="getManager" class="%ibrows_simple_seo.entity_manager.class%" public="false"/>
+        <service id="ibrows_simple_seo.entity_manager" class="%ibrows_simple_seo.entity_manager.class%" public="false">
+            <factory service="doctrine" method="getManager"/>
+        </service>
 
         <service id="ibrows_simple_seo.meta_tag_renderer" class="%ibrows_simple_seo.meta_tag_renderer.class%"/>
 
