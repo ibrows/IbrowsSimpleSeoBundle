@@ -95,12 +95,11 @@ class TwigExtension extends \Twig_Extension implements HtmlFilterInterface
     public function getFunctions()
     {
         return array(
-            'sseo_metatags'     => new \Twig_SimpleFunction($this, 'metaTagsHtml', array('is_safe' => array('html'))),
-            'sseo_metatag'      => new \Twig_SimpleFunction($this, 'metaTag', array('is_safe' => array('html'))),
-            'scms_metatags'     => new \Twig_SimpleFunction($this, 'metaTagsHtml', array('is_safe' => array('html'))),
-            'scms_metatag'      => new \Twig_SimpleFunction($this, 'metaTag', array('is_safe' => array('html'))),
-            'scms_canonicaltag' => new \Twig_SimpleFunction($this, 'canonicalTagsHtml', array('is_safe' => array('html'))),
-            'scms_canonical'    => new \Twig_SimpleFunction($this, 'canonical'),
+             new \Twig_SimpleFunction('sseo_metatag', array($this, 'metaTag', 'is_safe' => array('html'))),
+             new \Twig_SimpleFunction('scms_metatags', array($this, 'metaTagsHtml', 'is_safe' => array('html'))),
+             new \Twig_SimpleFunction('scms_metatag', array($this, 'metaTag', 'is_safe' => array('html'))),
+             new \Twig_SimpleFunction('scms_canonicaltag', array($this, 'canonicalTagsHtml', 'is_safe' => array('html'))),
+             new \Twig_SimpleFunction('scms_canonical', array($this, 'canonical')),
         );
     }
 
